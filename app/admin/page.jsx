@@ -162,15 +162,21 @@ export default function AdminDashboard() {
                                                     outline: "none"
                                                 }}
                                             >
-                                                <option value="Processing">Processing</option>
-                                                <option value="Shipped">Shipped</option>
-                                                <option value="Delivered">Delivered</option>
-                                                <option value="Cancelled">Cancelled</option>
-                                                <option disabled>──────────</option>
-                                                <option value="Return Requested">Return Requested</option>
-                                                <option value="Return Picked">Return Picked</option>
-                                                <option value="Return Received">Return Received</option>
-                                                <option value="Refund Issued">Refund Issued</option>
+                                                <optgroup label="Manual Actions" style={{ color: "#9ca3af" }}>
+                                                    <option value="Processing" style={{ color: "white" }}>Processing</option>
+                                                    <option value="Cancelled" style={{ color: "white" }}>Cancelled</option>
+                                                </optgroup>
+                                                <optgroup label="Delhivery Automated" style={{ color: "#3b82f6" }}>
+                                                    <option value="Shipped" style={{ color: "white" }}>Shipped</option>
+                                                    <option value="Delivered" style={{ color: "white" }}>Delivered</option>
+                                                    <option value="Return Requested" style={{ color: "white" }}>Return Requested</option>
+                                                    <option value="Return Picked" style={{ color: "white" }}>Return Picked</option>
+                                                    <option value="Return Received" style={{ color: "white" }}>Return Received (RTO)</option>
+                                                </optgroup>
+                                                <optgroup label="Finance (Manual Update required)" style={{ color: "#f97316" }}>
+                                                    <option value="Refund Issued" style={{ color: "white" }}>Refund Issued</option>
+                                                </optgroup>
+
                                             </select>
                                         </td>
 
