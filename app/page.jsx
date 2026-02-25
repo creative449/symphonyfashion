@@ -1,14 +1,43 @@
- "use client";
+"use client";
 
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import ProductSection from "../components/ProductSection";
 import Footer from "../components/Footer";
-import { menProducts, womenProducts } from "../data/products";
 import { useCart } from "../components/CartContext";
 
 export default function HomePage() {
   const { addItem, itemCount, subtotal } = useCart();
+  const [menProducts, setMenProducts] = useState([]);
+  const [womenProducts, setWomenProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const response = await fetch('/api/products');
+        const data = await response.json();
+
+        // Split data into categories using the section property
+        const men = data.filter(product => product.section === 'men');
+        const women = data.filter(product => product.section === 'women');
+
+        setMenProducts(men);
+        setWomenProducts(women);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#fff', fontSize: '1.2rem' }}>Loading Collections...</div>;
+  }
 
   return (
     <div className="page">

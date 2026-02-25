@@ -1,19 +1,48 @@
-import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
-
-const uri = process.env.MONGODB_URI as string;
-const client = new MongoClient(uri);
+import connectDB from "../../../lib/mongodb";
+import Product from "../../../models/Product";
 
 export async function GET() {
   try {
-    await client.connect();
-    const db = client.db("fashionDB");
-    const products = await db.collection("products").find({}).toArray();
-
+    await connectDB();
+    const products = await Product.find({}).lean();
     return NextResponse.json(products);
   } catch (error) {
+    console.error("GET Products Error:", error);
     return NextResponse.json(
       { error: "Database error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    await connectDB();
+    const body = await request.json();
+
+    if (!body.title || !body.price) {
+      return NextResponse.json(
+        { error: "Missing required fields (title, price)" },
+        { status: 400 }
+      );
+    }
+
+    // Ensure both title and name are present
+    if (body.title && !body.name) {
+      body.name = body.title;
+    }
+
+    const newProduct = await Product.create(body);
+
+    return NextResponse.json(
+      { message: "Product created successfully", productId: newProduct._id },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    console.error("POST Product Error:", error);
+    return NextResponse.json(
+      { error: "Database error while inserting product", details: error.message },
       { status: 500 }
     );
   }

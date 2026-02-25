@@ -9,14 +9,20 @@ export function CartProvider({ children }) {
 
   const addItem = (product) => {
     setItems((prev) => {
-      const existing = prev.find((p) => p.id === product.id);
+      // Use cartItemId (id + size) to check for existence, so different sizes of same product don't merge
+      const cartId = product.cartItemId || product.id;
+      const existing = prev.find((p) => (p.cartItemId || p.id) === cartId);
       if (existing) {
         return prev.map((p) =>
-          p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
+          (p.cartItemId || p.id) === cartId ? { ...p, quantity: p.quantity + 1 } : p
         );
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, { ...product, quantity: 1, cartItemId: cartId }];
     });
+  };
+
+  const removeItem = (cartId) => {
+    setItems((prev) => prev.filter((p) => (p.cartItemId || p.id) !== cartId));
   };
 
   const value = useMemo(() => {
@@ -25,7 +31,7 @@ export function CartProvider({ children }) {
       (sum, p) => sum + p.quantity * p.price,
       0
     );
-    return { items, addItem, itemCount, subtotal };
+    return { items, addItem, removeItem, itemCount, subtotal };
   }, [items]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

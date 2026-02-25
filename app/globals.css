@@ -56,12 +56,10 @@ main {
   top: 0;
   z-index: 30;
   backdrop-filter: blur(18px);
-  background: linear-gradient(
-    to bottom,
-    rgba(2, 6, 23, 0.95),
-    rgba(2, 6, 23, 0.7),
-    transparent
-  );
+  background: linear-gradient(to bottom,
+      rgba(2, 6, 23, 0.95),
+      rgba(2, 6, 23, 0.7),
+      transparent);
   border-bottom: 1px solid rgba(15, 23, 42, 0.9);
 }
 
@@ -593,11 +591,9 @@ main {
   position: absolute;
   inset: 22% 18% 8%;
   border-radius: 40% 40% 35% 35%;
-  background: linear-gradient(
-    to bottom,
-    rgba(248, 113, 22, 0.18),
-    rgba(248, 113, 22, 0.9)
-  );
+  background: linear-gradient(to bottom,
+      rgba(248, 113, 22, 0.18),
+      rgba(248, 113, 22, 0.9));
 }
 
 .product-info {
@@ -701,6 +697,23 @@ main {
   border-radius: 999px;
   padding: 0.15rem 0.45rem;
   border: 1px solid rgba(148, 163, 184, 0.5);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.size-pill:hover {
+  background: rgba(249, 115, 22, 0.1);
+  border-color: rgba(249, 115, 22, 0.4);
+  color: #e5e7eb;
+}
+
+.size-pill.selected {
+  background: rgba(249, 115, 22, 0.2);
+  border-color: #f97316;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
 }
 
 .size-pill span {
@@ -826,4 +839,3 @@ main {
     grid-template-columns: minmax(0, 1fr);
   }
 }
-

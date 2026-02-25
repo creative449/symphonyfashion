@@ -1,9 +1,12 @@
- "use client";
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function ProductCard({ product, onAddToCart }) {
+  const [selectedSize, setSelectedSize] = useState(null);
+
   const {
     name,
     category,
@@ -20,8 +23,13 @@ export default function ProductCard({ product, onAddToCart }) {
   const badgeClass = isNew ? "product-badge new" : isOnSale ? "product-badge sale" : "product-badge";
 
   const handleQuickAdd = () => {
+    if (!selectedSize && sizes && sizes.length > 0) {
+      alert("Please select a size first!");
+      return;
+    }
     if (onAddToCart) {
-      onAddToCart(product);
+      // Pass the selected size to the cart
+      onAddToCart({ ...product, selectedSize, cartItemId: `${product.id}-${selectedSize}` });
     }
   };
 
@@ -29,7 +37,7 @@ export default function ProductCard({ product, onAddToCart }) {
     <article className="product-card">
       {badgeLabel && <div className={badgeClass}>{badgeLabel}</div>}
 
-      <Link href={`/products/${product.id}`} className="product-image-link">
+      <Link href={`/product/${product._id || product.id}`} className="product-image-link">
         <div className="product-image">
           <div className="product-image-inner" />
           <div className="product-image-figure">
@@ -55,7 +63,7 @@ export default function ProductCard({ product, onAddToCart }) {
 
       <div className="product-info">
         <div className="product-category">{category}</div>
-        <Link href={`/products/${product.id}`} className="product-name-link">
+        <Link href={`/product/${product._id || product.id}`} className="product-name-link">
           <h3 className="product-name">{name}</h3>
         </Link>
 
@@ -86,9 +94,14 @@ export default function ProductCard({ product, onAddToCart }) {
           </div>
           <div className="sizes">
             {sizes.map((size) => (
-              <div key={size} className="size-pill">
+              <button
+                key={size}
+                type="button"
+                className={`size-pill ${selectedSize === size ? "selected" : ""}`}
+                onClick={() => setSelectedSize(size)}
+              >
                 <span>{size}</span>
-              </div>
+              </button>
             ))}
           </div>
         </div>
