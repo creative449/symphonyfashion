@@ -3,6 +3,7 @@ import Order from "../../../../../models/Order";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../auth/[...nextauth]/route";
+import { issueRazorpayRefund } from "../../../../../lib/razorpayRefund";
 
 export async function PATCH(req, { params }) {
     try {
@@ -20,9 +21,32 @@ export async function PATCH(req, { params }) {
         }
 
         await connectDB();
+
+        let targetStatus = status;
+
+        // Fetch current order first to check conditions
+        const orderToUpdate = await Order.findById(id);
+        if (!orderToUpdate) {
+            return NextResponse.json({ message: "Order not found" }, { status: 404 });
+        }
+
+        // Amazon Automation: If admin forces it to "Refund Issued" OR "Return Received", attempt financially refunding!
+        if (status === "Refund Issued" || status === "Return Received") {
+            // Check if it's already refunded manually to avoid double-refunds
+            if (orderToUpdate.status !== "Refund Issued") {
+                const automatedRefund = await issueRazorpayRefund(orderToUpdate);
+                if (automatedRefund) {
+                    targetStatus = "Refund Issued"; // Fast forward
+                    console.log("Admin Action Triggered Razorpay Refund!");
+                } else if (status === "Refund Issued") {
+                    return NextResponse.json({ message: "Failed to automatically process refund with Razorpay. Please process manually from Razorpay Dashboard." }, { status: 500 });
+                }
+            }
+        }
+
         const updatedOrder = await Order.findByIdAndUpdate(
             id,
-            { status },
+            { status: targetStatus },
             { new: true }
         );
 

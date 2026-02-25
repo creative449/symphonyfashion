@@ -1,6 +1,7 @@
 import connectDB from "../../../../lib/mongodb";
 import Order from "../../../../models/Order";
 import { NextResponse } from "next/server";
+import { issueRazorpayRefund } from "../../../../lib/razorpayRefund";
 
 // Delhivery Webhook Handler for automated Shipping & Returns updates
 export async function POST(req) {
@@ -56,6 +57,14 @@ export async function POST(req) {
             case "Returned to Origin":
                 // Delhivery brought it back to the warehouse
                 newInternalStatus = "Return Received";
+
+                // 🔥 Amazon Level Automation: Moment the box hits warehouse, refund their card!
+                const automatedRefund = await issueRazorpayRefund(order);
+                if (automatedRefund) {
+                    // Fast track the internal status directly to Refund Issued!
+                    newInternalStatus = "Refund Issued";
+                    console.log("💸 Customer Refund instantly triggered via Razorpay!");
+                }
                 break;
             default:
                 console.log(`Unhandled Delhivery status: ${status}. Ignoring.`);

@@ -51,12 +51,15 @@ export default function AdminDashboard() {
             });
 
             if (!res.ok) {
-                alert("Failed to update status.");
+                const data = await res.json();
+                alert(data.message || "Failed to update status.");
                 return;
             }
 
+            const data = await res.json();
+
             setOrders(orders.map(order =>
-                order._id === orderId ? { ...order, status: newStatus } : order
+                order._id === orderId ? { ...order, status: data.order.status } : order
             ));
         } catch (error) {
             console.error(error);
