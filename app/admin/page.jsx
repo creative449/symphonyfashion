@@ -82,13 +82,21 @@ export default function AdminDashboard() {
             <main className="container" style={{ padding: "4rem 0", maxWidth: "1200px", margin: "0 auto" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                     <h1 style={{ fontSize: "2rem" }}>Admin Dashboard</h1>
-                    <button
-                        onClick={() => router.push('/admin/add-product')}
-                        className="btn-primary"
-                        style={{ padding: "0.6rem 1.2rem", fontSize: "0.9rem" }}
-                    >
-                        + Add Product
-                    </button>
+                    <div style={{ display: "flex", gap: "1rem" }}>
+                        <button
+                            onClick={() => router.push('/admin/simulator')}
+                            style={{ padding: "0.6rem 1.2rem", fontSize: "0.9rem", background: "rgba(59,130,246,0.1)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.3)", borderRadius: "6px", cursor: "pointer", fontWeight: 600 }}
+                        >
+                            Logistics Simulator
+                        </button>
+                        <button
+                            onClick={() => router.push('/admin/add-product')}
+                            className="btn-primary"
+                            style={{ padding: "0.6rem 1.2rem", fontSize: "0.9rem" }}
+                        >
+                            + Add Product
+                        </button>
+                    </div>
                 </div>
                 <p style={{ color: "#9ca3af", marginBottom: "3rem" }}>Manage your store's recent orders below.</p>
 
