@@ -62,28 +62,17 @@ export const authOptions = {
 
                         await sendEmail({
                             to: user.email,
-                            subject: "Welcome to Symphony Fashion via Google!",
-                            html: `<h2>Welcome, ${user.name}!</h2><p>Your Google account was successfully linked to Symphony Fashion.</p>`,
+                            subject: "Welcome to Symphony Fashion!",
+                            html: `<h2>Welcome, ${user.name}! 🎉</h2><p>Thank you for successfully creating your Symphony Fashion account via Google. We are thrilled to have you here and can't wait for you to explore our latest collections.</p><p>Happy shopping!</p>`,
                         });
                     } else {
                         user.role = existingUser.role;
                         user._id = existingUser._id;
-
-                        await sendEmail({
-                            to: user.email,
-                            subject: "Security Alert: New Google sign-in",
-                            html: `<p>Hi ${user.name},</p><p>We detected a successful Google sign-in to your Symphony Fashion account.</p>`,
-                        });
                     }
                     return true;
                 }
 
                 if (account?.provider === "credentials") {
-                    await sendEmail({
-                        to: user.email,
-                        subject: "Security Alert: New login",
-                        html: `<p>Hi ${user.name || 'User'},</p><p>We detected a successful password sign-in to your Symphony Fashion account.</p>`,
-                    });
                     return true;
                 }
 
