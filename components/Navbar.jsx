@@ -18,21 +18,15 @@ export default function Navbar({ cartCount }) {
         </Link>
 
         <nav className="nav-links">
-          <a href="#men" className="nav-link">
+          <Link href="/#men" className="nav-link">
             Men
-          </a>
-          <a href="#women" className="nav-link">
+          </Link>
+          <Link href="/#women" className="nav-link">
             Women
-          </a>
-          <a href="#new" className="nav-link">
-            New Drops
-          </a>
-          <a href="#bestsellers" className="nav-link">
+          </Link>
+          <Link href="/#bestsellers" className="nav-link">
             Best Sellers
-          </a>
-          <a href="#offers" className="nav-link">
-            Offers
-          </a>
+          </Link>
         </nav>
 
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
