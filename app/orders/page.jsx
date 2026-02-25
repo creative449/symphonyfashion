@@ -84,7 +84,7 @@ export default function MyOrders() {
             });
             const data = await res.json();
             if (res.ok) {
-                setOrders(orders.map(o => o._id === orderId ? { ...o, status: "Returned" } : o));
+                setOrders(orders.map(o => o._id === orderId ? { ...o, status: "Return Requested" } : o));
                 alert("Return requested successfully.");
             } else {
                 alert(data.message || "Failed to return order.");
@@ -143,34 +143,56 @@ export default function MyOrders() {
                                 </div>
 
                                 {/* Tracking Timeline */}
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2.5rem", position: "relative", padding: "0 1rem" }}>
-                                    <div style={{ position: "absolute", top: "50%", left: "10%", right: "10%", height: "3px", background: "rgba(148,163,184,0.2)", zIndex: 0, transform: "translateY(-50%)" }}>
-                                        <div style={{ height: "100%", background: "#22c55e", width: order.status === "Processing" ? "25%" : order.status === "Shipped" ? "75%" : "100%", transition: "width 0.5s ease" }} />
-                                    </div>
+                                <div style={{ marginBottom: "2.5rem", padding: "0 1rem" }}>
+                                    {["Return Requested", "Return Picked", "Return Received", "Refund Initiated", "Returned"].includes(order.status) ? (
+                                        <div style={{ padding: "1.5rem", background: "rgba(249,115,22,0.05)", borderRadius: "12px", border: "1px solid rgba(249,115,22,0.2)" }}>
+                                            <h4 style={{ color: "#f97316", marginBottom: "1.5rem", fontSize: "1rem" }}>Return Progress</h4>
+                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
+                                                <div style={{ position: "absolute", top: "50%", left: "5%", right: "5%", height: "3px", background: "rgba(148,163,184,0.2)", zIndex: 0, transform: "translateY(-50%)" }}>
+                                                    <div style={{ height: "100%", background: "#f97316", transition: "width 0.5s ease", width: order.status === "Return Requested" ? "12%" : order.status === "Return Picked" ? "37%" : order.status === "Return Received" ? "62%" : order.status === "Refund Initiated" ? "87%" : "100%" }} />
+                                                </div>
 
-                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem" }}>
-                                        <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#22c55e", border: "3px solid #0b1020" }} />
-                                        <span style={{ fontSize: "0.8rem", color: "#e2e8f0", fontWeight: 600 }}>Processing</span>
-                                    </div>
-                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem" }}>
-                                        <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: order.status === "Shipped" || order.status === "Delivered" ? "#22c55e" : "rgba(148,163,184,0.3)", border: "3px solid #0b1020" }} />
-                                        <span style={{ fontSize: "0.8rem", color: order.status === "Shipped" || order.status === "Delivered" ? "#e2e8f0" : "#9ca3af", fontWeight: 600 }}>Shipped</span>
-                                    </div>
-                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem" }}>
-                                        <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: order.status === "Delivered" ? "#22c55e" : "rgba(148,163,184,0.3)", border: "3px solid #0b1020" }} />
-                                        <span style={{ fontSize: "0.8rem", color: order.status === "Delivered" ? "#e2e8f0" : "#9ca3af", fontWeight: 600 }}>Delivered</span>
-                                    </div>
-                                    {order.status === "Cancelled" && (
-                                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15,23,42,0.8)", zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)", borderRadius: "12px" }}>
-                                            <span style={{ background: "#ef4444", color: "white", padding: "0.5rem 1.5rem", borderRadius: "99px", fontWeight: "bold", fontSize: "1.2rem", boxShadow: "0 4px 15px rgba(239, 68, 68, 0.4)" }}>CANCELLED</span>
+                                                {["Return Requested", "Return Picked", "Return Received", "Refund Initiated", "Returned"].map((step, i) => {
+                                                    const statuses = ["Return Requested", "Return Picked", "Return Received", "Refund Initiated", "Returned"];
+                                                    const currentIndex = statuses.indexOf(order.status);
+                                                    const isCompleted = i <= currentIndex;
+                                                    return (
+                                                        <div key={step} style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem", width: "80px" }}>
+                                                            <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: isCompleted ? "#f97316" : "rgba(148,163,184,0.3)", border: "3px solid #0b1020" }} />
+                                                            <span style={{ fontSize: "0.7rem", color: isCompleted ? "#e2e8f0" : "#9ca3af", fontWeight: 600, textAlign: "center", lineHeight: "1.2" }}>{step}</span>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                            {order.status === "Return Requested" && <p style={{ fontSize: "0.85rem", color: "#fbbf24", marginTop: "1.5rem", textAlign: "center" }}>We've received your request! A delivery associate will be assigned to pick up your item shortly.</p>}
                                         </div>
-                                    )}
-                                    {order.status === "Returned" && (
-                                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15,23,42,0.8)", zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)", borderRadius: "12px" }}>
-                                            <span style={{ background: "#f97316", color: "white", padding: "0.5rem 1.5rem", borderRadius: "99px", fontWeight: "bold", fontSize: "1.2rem", boxShadow: "0 4px 15px rgba(249, 115, 22, 0.4)" }}>RETURNED</span>
+                                    ) : (
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
+                                            <div style={{ position: "absolute", top: "50%", left: "10%", right: "10%", height: "3px", background: "rgba(148,163,184,0.2)", zIndex: 0, transform: "translateY(-50%)" }}>
+                                                <div style={{ height: "100%", background: "#22c55e", width: order.status === "Processing" ? "25%" : order.status === "Shipped" ? "75%" : "100%", transition: "width 0.5s ease" }} />
+                                            </div>
+
+                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem" }}>
+                                                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#22c55e", border: "3px solid #0b1020" }} />
+                                                <span style={{ fontSize: "0.8rem", color: "#e2e8f0", fontWeight: 600 }}>Processing</span>
+                                            </div>
+                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem" }}>
+                                                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: order.status === "Shipped" || order.status === "Delivered" ? "#22c55e" : "rgba(148,163,184,0.3)", border: "3px solid #0b1020" }} />
+                                                <span style={{ fontSize: "0.8rem", color: order.status === "Shipped" || order.status === "Delivered" ? "#e2e8f0" : "#9ca3af", fontWeight: 600 }}>Shipped</span>
+                                            </div>
+                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem" }}>
+                                                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: order.status === "Delivered" ? "#22c55e" : "rgba(148,163,184,0.3)", border: "3px solid #0b1020" }} />
+                                                <span style={{ fontSize: "0.8rem", color: order.status === "Delivered" ? "#e2e8f0" : "#9ca3af", fontWeight: 600 }}>Delivered</span>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
+                                {order.status === "Cancelled" && (
+                                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15,23,42,0.8)", zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)", borderRadius: "12px" }}>
+                                        <span style={{ background: "#ef4444", color: "white", padding: "0.5rem 1.5rem", borderRadius: "99px", fontWeight: "bold", fontSize: "1.2rem", boxShadow: "0 4px 15px rgba(239, 68, 68, 0.4)" }}>CANCELLED</span>
+                                    </div>
+                                )}
+
 
                                 <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
                                     {order.orderItems.map((item, idx) => (

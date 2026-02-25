@@ -62,10 +62,10 @@ export async function PATCH(req) {
                 return NextResponse.json({ message: "Only delivered orders can be returned." }, { status: 400 });
             }
 
-            order.status = "Returned";
+            order.status = "Return Requested";
             await order.save();
 
-            return NextResponse.json({ message: "Order Returned Successfully", order }, { status: 200 });
+            return NextResponse.json({ message: "Order Return Initiated Successfully", order }, { status: 200 });
         }
 
         return NextResponse.json({ message: "Invalid Action" }, { status: 400 });
