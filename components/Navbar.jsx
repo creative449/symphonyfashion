@@ -20,14 +20,14 @@ export default function Navbar() {
         </Link>
 
         <nav className="nav-links">
+          <Link href="/shop" className="nav-link" style={{ color: "#f97316", fontWeight: "bold" }}>
+            Shop All
+          </Link>
           <Link href="/#men" className="nav-link">
             Men
           </Link>
           <Link href="/#women" className="nav-link">
             Women
-          </Link>
-          <Link href="/#bestsellers" className="nav-link">
-            Best Sellers
           </Link>
         </nav>
 

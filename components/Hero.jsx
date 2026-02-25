@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 export default function Hero() {
   const scrollToSection = (id) => {
@@ -28,14 +29,14 @@ export default function Hero() {
           </p>
 
           <div className="hero-actions">
-            <button
-              type="button"
+            <Link
+              href="/shop"
               className="btn-primary"
-              onClick={() => scrollToSection("men")}
+              style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
             >
-              Shop Men
+              Explore The Archive
               <span>↗</span>
-            </button>
+            </Link>
             <button
               type="button"
               className="btn-ghost"
