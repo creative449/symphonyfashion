@@ -1,11 +1,28 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState, useEffect } from "react";
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("symphony_cart");
+    if (saved) {
+      try {
+        setItems(JSON.parse(saved));
+      } catch (err) { }
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem("symphony_cart", JSON.stringify(items));
+    }
+  }, [items, isInitialized]);
 
   const addItem = (product) => {
     setItems((prev) => {

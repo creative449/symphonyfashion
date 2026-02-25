@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { useCart } from "./CartContext";
 
-export default function Navbar({ cartCount }) {
+export default function Navbar() {
   const { data: session } = useSession();
+  const { itemCount } = useCart();
 
   return (
     <header className="navbar">
@@ -60,7 +62,7 @@ export default function Navbar({ cartCount }) {
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Link href="/cart" className="cart-pill">
               <span className="cart-pill-icon">🛒</span>
-              <span className="cart-pill-count">{cartCount}</span>
+              <span className="cart-pill-count">{itemCount || 0}</span>
             </Link>
           </div>
         </div>
