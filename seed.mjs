@@ -22,7 +22,7 @@ async function seed() {
     try {
         await client.connect();
         console.log("Connected to MongoDB...");
-        const db = client.db("fashionDB");
+        const db = client.db("symphonyfashion");
 
         // Clear existing
         await db.collection("products").deleteMany({});

@@ -26,6 +26,10 @@ const orderSchema = new Schema(
             type: Number,
             required: true,
         },
+        paymentInfo: {
+            id: { type: String },
+            status: { type: String },
+        },
         status: {
             type: String,
             default: "Processing",

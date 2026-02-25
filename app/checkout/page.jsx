@@ -3,12 +3,13 @@
 import { useCart } from "../../components/CartContext";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import { useSession } from "next-auth/react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 export default function CheckoutPage() {
-    const { subtotal, items } = useCart();
+    const { subtotal, items, clearCart } = useCart();
     const { data: session } = useSession();
     const [formData, setFormData] = useState({
         name: "",
@@ -61,23 +62,79 @@ export default function CheckoutPage() {
         };
 
         try {
-            const res = await fetch("/api/orders", {
+            // 1. Create a Razorpay Order
+            const razorpayRes = await fetch("/api/razorpay", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(orderData)
+                body: JSON.stringify({ amount: total })
             });
+            const order = await razorpayRes.json();
 
-            if (res.ok) {
-                const data = await res.json();
-                setOrderId(data.orderId);
-                setSuccess(true);
+            if (order.id) {
+                // 2. Open Razorpay Checktout Popup
+                const options = {
+                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_H8D2C2sQW0uN0j',
+                    amount: order.amount,
+                    currency: "INR",
+                    name: "Symphony Fashion",
+                    description: "Test Transaction",
+                    order_id: order.id,
+                    handler: async function (response) {
+                        try {
+                            // 3. Complete Order Process in Database on Success
+                            const fullOrderData = {
+                                ...orderData,
+                                paymentInfo: {
+                                    id: response.razorpay_payment_id,
+                                    status: "Paid",
+                                }
+                            };
+
+                            const ourDbRes = await fetch("/api/orders", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(fullOrderData)
+                            });
+
+                            if (ourDbRes.ok) {
+                                const data = await ourDbRes.json();
+                                setOrderId(data.orderId || response.razorpay_order_id);
+                                setSuccess(true);
+                                clearCart();
+                            } else {
+                                alert("Order failed to save to database. Contact Support with Payment ID: " + response.razorpay_payment_id);
+                            }
+                        } catch (err) {
+                            console.error("Database save failed: ", err);
+                        } finally {
+                            setLoading(false);
+                        }
+                    },
+                    prefill: {
+                        name: formData.name,
+                        email: formData.email,
+                        contact: formData.contact || "9999999999"
+                    },
+                    theme: {
+                        color: "#f97316"
+                    }
+                };
+
+                const rzp1 = new window.Razorpay(options);
+
+                rzp1.on('payment.failed', function (response) {
+                    alert('Payment Failed! Reason: ' + response.error.description);
+                    setLoading(false);
+                });
+
+                rzp1.open();
             } else {
-                alert("Order failed to process. Please try again.");
+                alert("Failed to initialize payment gateway.");
+                setLoading(false);
             }
         } catch (error) {
             console.error(error);
             alert("Order failed to process. Please try again.");
-        } finally {
             setLoading(false);
         }
     };
@@ -105,6 +162,7 @@ export default function CheckoutPage() {
 
     return (
         <div className="page">
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" />
             <Navbar cartCount={items.length} />
             <main className="container" style={{ padding: "3rem 0", maxWidth: "1000px", margin: "0 auto" }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '3rem' }}>

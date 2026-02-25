@@ -25,13 +25,17 @@ export function CartProvider({ children }) {
     setItems((prev) => prev.filter((p) => (p.cartItemId || p.id) !== cartId));
   };
 
+  const clearCart = () => {
+    setItems([]);
+  };
+
   const value = useMemo(() => {
     const itemCount = items.reduce((sum, p) => sum + p.quantity, 0);
     const subtotal = items.reduce(
       (sum, p) => sum + p.quantity * p.price,
       0
     );
-    return { items, addItem, removeItem, itemCount, subtotal };
+    return { items, addItem, removeItem, clearCart, itemCount, subtotal };
   }, [items]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
     try {
-        const { userEmail, shippingInfo, orderItems, totalAmount } = await req.json();
+        const { userEmail, shippingInfo, orderItems, totalAmount, paymentInfo } = await req.json();
 
-        if (!userEmail || !shippingInfo || !orderItems || !totalAmount) {
+        if (!userEmail || !shippingInfo || !orderItems || !totalAmount || !paymentInfo) {
             return NextResponse.json({ message: "Incomplete order data" }, { status: 400 });
         }
 
@@ -16,7 +16,9 @@ export async function POST(req) {
             userEmail,
             shippingInfo,
             orderItems,
-            totalAmount
+            totalAmount,
+            paymentInfo,
+            status: "Processing"
         });
 
         return NextResponse.json({ message: "Order placed successfully", orderId: newOrder._id }, { status: 201 });
