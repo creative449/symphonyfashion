@@ -5,9 +5,11 @@ export async function POST(req) {
     try {
         const { amount } = await req.json();
 
+        const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_H8D2C2sQW0uN0j';
+
         // Initialize Razorpay
         const razorpay = new Razorpay({
-            key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_H8D2C2sQW0uN0j', // Fallback test key if missing
+            key_id: keyId,
             key_secret: process.env.RAZORPAY_KEY_SECRET || 'jG2pCq7pC1w4a2oR9aLx9k1z',
         });
 
@@ -25,7 +27,7 @@ export async function POST(req) {
             throw new Error("No Order ID created");
         }
 
-        return NextResponse.json(order, { status: 200 });
+        return NextResponse.json({ ...order, keyId }, { status: 200 });
     } catch (error) {
         console.error("Razorpay order error", error);
 

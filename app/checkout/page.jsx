@@ -73,7 +73,7 @@ export default function CheckoutPage() {
             if (order.id) {
                 // 2. Open Razorpay Checktout Popup
                 const options = {
-                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_H8D2C2sQW0uN0j',
+                    key: order.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_H8D2C2sQW0uN0j',
                     amount: order.amount,
                     currency: "INR",
                     name: "Symphony Fashion",
