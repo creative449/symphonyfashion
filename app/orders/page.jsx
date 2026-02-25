@@ -144,16 +144,16 @@ export default function MyOrders() {
 
                                 {/* Tracking Timeline */}
                                 <div style={{ marginBottom: "2.5rem", padding: "0 1rem" }}>
-                                    {["Return Requested", "Return Picked", "Return Received", "Refund Initiated", "Returned"].includes(order.status) ? (
+                                    {["Return Requested", "Return Picked", "Return Received", "Refund Issued"].includes(order.status) ? (
                                         <div style={{ padding: "1.5rem", background: "rgba(249,115,22,0.05)", borderRadius: "12px", border: "1px solid rgba(249,115,22,0.2)" }}>
                                             <h4 style={{ color: "#f97316", marginBottom: "1.5rem", fontSize: "1rem" }}>Return Progress</h4>
                                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
                                                 <div style={{ position: "absolute", top: "50%", left: "5%", right: "5%", height: "3px", background: "rgba(148,163,184,0.2)", zIndex: 0, transform: "translateY(-50%)" }}>
-                                                    <div style={{ height: "100%", background: "#f97316", transition: "width 0.5s ease", width: order.status === "Return Requested" ? "12%" : order.status === "Return Picked" ? "37%" : order.status === "Return Received" ? "62%" : order.status === "Refund Initiated" ? "87%" : "100%" }} />
+                                                    <div style={{ height: "100%", background: "#f97316", transition: "width 0.5s ease", width: order.status === "Return Requested" ? "16%" : order.status === "Return Picked" ? "50%" : order.status === "Return Received" ? "83%" : "100%" }} />
                                                 </div>
 
-                                                {["Return Requested", "Return Picked", "Return Received", "Refund Initiated", "Returned"].map((step, i) => {
-                                                    const statuses = ["Return Requested", "Return Picked", "Return Received", "Refund Initiated", "Returned"];
+                                                {["Return Requested", "Return Picked", "Return Received", "Refund Issued"].map((step, i) => {
+                                                    const statuses = ["Return Requested", "Return Picked", "Return Received", "Refund Issued"];
                                                     const currentIndex = statuses.indexOf(order.status);
                                                     const isCompleted = i <= currentIndex;
                                                     return (
@@ -164,7 +164,8 @@ export default function MyOrders() {
                                                     );
                                                 })}
                                             </div>
-                                            {order.status === "Return Requested" && <p style={{ fontSize: "0.85rem", color: "#fbbf24", marginTop: "1.5rem", textAlign: "center" }}>We've received your request! A delivery associate will be assigned to pick up your item shortly.</p>}
+                                            {order.status === "Return Requested" && <p style={{ fontSize: "0.85rem", color: "#fbbf24", marginTop: "1.5rem", textAlign: "center", lineHeight: "1.4" }}>We've received your request! A delivery associate will be assigned to pick up your item shortly.</p>}
+                                            {order.status === "Refund Issued" && <p style={{ fontSize: "0.85rem", color: "#4ade80", marginTop: "1.5rem", textAlign: "center", lineHeight: "1.4" }}>Return Complete. Your refund has been successfully initiated! Please allow 5-7 business days for the amount to reflect in your original payment method.</p>}
                                         </div>
                                     ) : (
                                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>

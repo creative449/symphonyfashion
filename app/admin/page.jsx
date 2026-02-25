@@ -162,8 +162,7 @@ export default function AdminDashboard() {
                                                 <option value="Return Requested">Return Requested</option>
                                                 <option value="Return Picked">Return Picked</option>
                                                 <option value="Return Received">Return Received</option>
-                                                <option value="Refund Initiated">Refund Initiated</option>
-                                                <option value="Returned">Returned</option>
+                                                <option value="Refund Issued">Refund Issued</option>
                                             </select>
                                         </td>
 
