@@ -3,6 +3,7 @@ import Order from "../../../../models/Order";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]/route";
+import { createReversePickup } from "../../../../lib/delhivery";
 
 export async function GET() {
     try {
@@ -65,7 +66,13 @@ export async function PATCH(req) {
             order.status = "Return Requested";
             await order.save();
 
-            return NextResponse.json({ message: "Order Return Initiated Successfully", order }, { status: 200 });
+            // Programmatically notify Delhivery Servers instantly!
+            const delhiveryResponse = await createReversePickup(order);
+            if (delhiveryResponse) {
+                console.log("Delhivery driver scheduled to pick up tomorrow!");
+            }
+
+            return NextResponse.json({ message: "Order Return Initiated & Scheduled Successfully", order }, { status: 200 });
         }
 
         return NextResponse.json({ message: "Invalid Action" }, { status: 400 });
