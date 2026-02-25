@@ -74,6 +74,27 @@ export default function MyOrders() {
         }
     };
 
+    const handleReturnOrder = async (orderId) => {
+        if (!confirm("Are you sure you want to return this order?")) return;
+        try {
+            const res = await fetch("/api/user/orders", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId, action: "return" })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setOrders(orders.map(o => o._id === orderId ? { ...o, status: "Returned" } : o));
+                alert("Return requested successfully.");
+            } else {
+                alert(data.message || "Failed to return order.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error returning the order.");
+        }
+    };
+
     if (status === "loading" || loading) {
         return (
             <div className="page" style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -144,6 +165,11 @@ export default function MyOrders() {
                                             <span style={{ background: "#ef4444", color: "white", padding: "0.5rem 1.5rem", borderRadius: "99px", fontWeight: "bold", fontSize: "1.2rem", boxShadow: "0 4px 15px rgba(239, 68, 68, 0.4)" }}>CANCELLED</span>
                                         </div>
                                     )}
+                                    {order.status === "Returned" && (
+                                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15,23,42,0.8)", zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)", borderRadius: "12px" }}>
+                                            <span style={{ background: "#f97316", color: "white", padding: "0.5rem 1.5rem", borderRadius: "99px", fontWeight: "bold", fontSize: "1.2rem", boxShadow: "0 4px 15px rgba(249, 115, 22, 0.4)" }}>RETURNED</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -175,16 +201,28 @@ export default function MyOrders() {
                                         {order.shippingInfo.address}, {order.shippingInfo.city}<br />
                                         {order.shippingInfo.state} {order.shippingInfo.pin}
                                     </div>
-                                    <div style={{ display: "flex", gap: "1rem" }}>
-                                        {order.status === "Processing" && (
-                                            <button onClick={() => handleCancelOrder(order._id)} style={{ background: "transparent", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
-                                                Cancel Order
-                                            </button>
-                                        )}
-                                        {order.status === "Delivered" && (
-                                            <button onClick={() => alert("Mock: Open Review Modal")} style={{ background: "transparent", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.5)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
-                                                Write a Review
-                                            </button>
+                                    <div style={{ display: "flex", gap: "1rem", flexDirection: "column", alignItems: "flex-end" }}>
+                                        <div style={{ display: "flex", gap: "1rem" }}>
+                                            {order.status === "Processing" && (
+                                                <button onClick={() => handleCancelOrder(order._id)} style={{ background: "transparent", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
+                                                    Cancel Order
+                                                </button>
+                                            )}
+                                            {order.status === "Delivered" && (
+                                                <div style={{ display: "flex", gap: "0.5rem" }}>
+                                                    <button onClick={() => handleReturnOrder(order._id)} style={{ background: "transparent", color: "#f97316", border: "1px solid rgba(249,115,22,0.5)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
+                                                        Return Order
+                                                    </button>
+                                                    <button onClick={() => alert("Mock: Open Review Modal")} style={{ background: "transparent", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.5)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
+                                                        Write a Review
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {order.status === "Shipped" && (
+                                            <div style={{ color: "#fbbf24", fontSize: "0.8rem", textAlign: "right", marginTop: "0.5rem", maxWidth: "250px" }}>
+                                                Your item is on its way and cannot be cancelled. You can return it once received.
+                                            </div>
                                         )}
                                     </div>
                                 </div>

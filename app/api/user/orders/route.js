@@ -51,6 +51,21 @@ export async function PATCH(req) {
             await order.save();
 
             return NextResponse.json({ message: "Order Cancelled Successfully", order }, { status: 200 });
+        } else if (action === "return") {
+            const order = await Order.findOne({ _id: orderId, userEmail: session.user.email });
+
+            if (!order) {
+                return NextResponse.json({ message: "Order not found" }, { status: 404 });
+            }
+
+            if (order.status !== "Delivered") {
+                return NextResponse.json({ message: "Only delivered orders can be returned." }, { status: 400 });
+            }
+
+            order.status = "Returned";
+            await order.save();
+
+            return NextResponse.json({ message: "Order Returned Successfully", order }, { status: 200 });
         }
 
         return NextResponse.json({ message: "Invalid Action" }, { status: 400 });
