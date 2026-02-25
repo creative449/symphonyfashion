@@ -144,7 +144,7 @@ export default function AdminDashboard() {
                                                 onChange={(e) => handleStatusChange(order._id, e.target.value)}
                                                 style={{
                                                     background: "rgba(15,23,42,0.8)",
-                                                    color: order.status === "Delivered" ? "#22c55e" : order.status === "Shipped" ? "#3b82f6" : "#f97316",
+                                                    color: order.status === "Delivered" ? "#22c55e" : order.status === "Shipped" ? "#3b82f6" : order.status.includes("Return") ? "#f97316" : order.status === "Cancelled" ? "#ef4444" : "#fbbf24",
                                                     border: "1px solid rgba(148,163,184,0.3)",
                                                     padding: "0.5rem 0.8rem",
                                                     borderRadius: "6px",
@@ -158,8 +158,15 @@ export default function AdminDashboard() {
                                                 <option value="Shipped">Shipped</option>
                                                 <option value="Delivered">Delivered</option>
                                                 <option value="Cancelled">Cancelled</option>
+                                                <option disabled>──────────</option>
+                                                <option value="Return Requested">Return Requested</option>
+                                                <option value="Return Picked">Return Picked</option>
+                                                <option value="Return Received">Return Received</option>
+                                                <option value="Refund Initiated">Refund Initiated</option>
+                                                <option value="Returned">Returned</option>
                                             </select>
                                         </td>
+
                                     </tr>
                                 ))}
                             </tbody>
