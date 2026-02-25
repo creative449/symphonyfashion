@@ -39,7 +39,9 @@ export default function Navbar({ cartCount }) {
 
           {session ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.9rem', color: '#e5e7eb' }}>
-              <span>Hi, {session.user.name.split(" ")[0]}!</span>
+              <Link href="/profile" style={{ color: '#e5e7eb', textDecoration: 'none', fontWeight: 600 }}>
+                {session.user.name.split(" ")[0]}
+              </Link>
               <Link href="/orders" style={{ color: '#9ca3af', textDecoration: 'none' }}>
                 Orders
               </Link>

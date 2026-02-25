@@ -19,6 +19,27 @@ const userSchema = new Schema(
             type: String,
             default: "user",
         },
+        phone: {
+            type: String,
+        },
+        addresses: {
+            type: [
+                {
+                    title: String,
+                    name: String,
+                    address: String,
+                    city: String,
+                    state: String,
+                    pin: String,
+                    isDefault: Boolean
+                }
+            ],
+            default: []
+        },
+        wishlist: {
+            type: [String],
+            default: []
+        },
     },
     { timestamps: true }
 );
