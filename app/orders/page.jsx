@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Link from "next/link";
+import { useCart } from "../../components/CartContext";
 
 export default function MyOrders() {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const { addItem } = useCart();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -40,6 +42,37 @@ export default function MyOrders() {
             fetchOrders();
         }
     }, [session]);
+
+    const handleBuyAgain = (item) => {
+        addItem({
+            id: item.productId,
+            name: item.name,
+            price: item.price,
+            size: item.size || "M",
+        });
+        alert(`${item.name} added back to cart!`);
+    };
+
+    const handleCancelOrder = async (orderId) => {
+        if (!confirm("Are you sure you want to cancel this order?")) return;
+        try {
+            const res = await fetch("/api/user/orders", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId, action: "cancel" })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setOrders(orders.map(o => o._id === orderId ? { ...o, status: "Cancelled" } : o));
+                alert("Order cancelled successfully.");
+            } else {
+                alert(data.message || "Failed to cancel order.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error cancelling the order.");
+        }
+    };
 
     if (status === "loading" || loading) {
         return (
@@ -106,6 +139,11 @@ export default function MyOrders() {
                                         <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: order.status === "Delivered" ? "#22c55e" : "rgba(148,163,184,0.3)", border: "3px solid #0b1020" }} />
                                         <span style={{ fontSize: "0.8rem", color: order.status === "Delivered" ? "#e2e8f0" : "#9ca3af", fontWeight: 600 }}>Delivered</span>
                                     </div>
+                                    {order.status === "Cancelled" && (
+                                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15,23,42,0.8)", zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)", borderRadius: "12px" }}>
+                                            <span style={{ background: "#ef4444", color: "white", padding: "0.5rem 1.5rem", borderRadius: "99px", fontWeight: "bold", fontSize: "1.2rem", boxShadow: "0 4px 15px rgba(239, 68, 68, 0.4)" }}>CANCELLED</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -122,7 +160,7 @@ export default function MyOrders() {
                                             </div>
                                             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.6rem" }}>
                                                 <div style={{ fontWeight: "600", fontSize: "1.1rem" }}>₹{item.price.toLocaleString("en-IN")}</div>
-                                                <button onClick={() => alert("Mock: Added to Cart!")} style={{ background: "rgba(249,115,22,0.1)", color: "#f97316", border: "none", padding: "0.4rem 0.8rem", borderRadius: "6px", fontSize: "0.8rem", cursor: "pointer", fontWeight: 600 }}>
+                                                <button onClick={() => handleBuyAgain(item)} style={{ background: "rgba(249,115,22,0.1)", color: "#f97316", border: "none", padding: "0.4rem 0.8rem", borderRadius: "6px", fontSize: "0.8rem", cursor: "pointer", fontWeight: 600 }}>
                                                     Buy it again
                                                 </button>
                                             </div>
@@ -138,8 +176,8 @@ export default function MyOrders() {
                                         {order.shippingInfo.state} {order.shippingInfo.pin}
                                     </div>
                                     <div style={{ display: "flex", gap: "1rem" }}>
-                                        {order.status !== "Delivered" && (
-                                            <button onClick={() => alert("Mock: Cancellation Requested")} style={{ background: "transparent", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
+                                        {order.status === "Processing" && (
+                                            <button onClick={() => handleCancelOrder(order._id)} style={{ background: "transparent", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
                                                 Cancel Order
                                             </button>
                                         )}

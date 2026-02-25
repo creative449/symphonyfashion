@@ -24,3 +24,42 @@ export async function GET() {
         );
     }
 }
+
+export async function PATCH(req) {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session || !session.user) {
+            return NextResponse.json({ message: "Unauthorized. Please log in." }, { status: 401 });
+        }
+
+        const { orderId, action } = await req.json();
+        await connectDB();
+
+        if (action === "cancel") {
+            const order = await Order.findOne({ _id: orderId, userEmail: session.user.email });
+
+            if (!order) {
+                return NextResponse.json({ message: "Order not found" }, { status: 404 });
+            }
+
+            if (order.status !== "Processing") {
+                return NextResponse.json({ message: "Cannot cancel an order that is already shipped or delivered." }, { status: 400 });
+            }
+
+            order.status = "Cancelled";
+            await order.save();
+
+            return NextResponse.json({ message: "Order Cancelled Successfully", order }, { status: 200 });
+        }
+
+        return NextResponse.json({ message: "Invalid Action" }, { status: 400 });
+
+    } catch (error) {
+        console.error("Error updating order: ", error);
+        return NextResponse.json(
+            { message: "An error occurred while updating the order" },
+            { status: 500 }
+        );
+    }
+}
