@@ -125,6 +125,7 @@ export default function AddProduct() {
                                 style={{ padding: "0.8rem", borderRadius: "8px", background: "#0b1020", border: "1px solid rgba(148,163,184,0.3)", color: "white" }}>
                                 <option value="men">Men</option>
                                 <option value="women">Women</option>
+                                <option value="unisex">Unisex (Both Men & Women)</option>
                             </select>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>

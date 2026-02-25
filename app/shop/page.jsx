@@ -1,20 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useCart } from "../../components/CartContext";
 
-export default function Shop() {
+function ShopContent() {
     const { addItem, itemCount } = useCart();
+    const searchParams = useSearchParams();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     // Filter & Sort States
     const [searchQuery, setSearchQuery] = useState("");
-    const [categoryFilter, setCategoryFilter] = useState("All");
+    const defaultCategory = searchParams.get("category") || "All";
+    const [categoryFilter, setCategoryFilter] = useState(defaultCategory);
     const [sortOption, setSortOption] = useState("default");
 
     useEffect(() => {
@@ -36,8 +39,14 @@ export default function Shop() {
     const filteredAndSortedProducts = products
         .filter((product) => {
             // Category match
-            if (categoryFilter !== "All" && product.section !== categoryFilter.toLowerCase() && product.category?.toLowerCase() !== categoryFilter.toLowerCase()) {
-                return false;
+            if (categoryFilter !== "All") {
+                const searchCat = categoryFilter.toLowerCase();
+                const isMatch = product.section === searchCat || product.category?.toLowerCase() === searchCat;
+                const isUnisex = product.section === "unisex" && (searchCat === "men" || searchCat === "women");
+
+                if (!isMatch && !isUnisex) {
+                    return false;
+                }
             }
             // Search match
             if (searchQuery) {
@@ -92,7 +101,7 @@ export default function Shop() {
 
                     {/* Category Pills */}
                     <div style={{ display: "flex", gap: "0.8rem", overflowX: "auto", paddingBottom: "0.5rem", scrollbarWidth: "none" }}>
-                        {["All", "Men", "Women", "Unisex", "Accessories"].map((cat) => (
+                        {["All", "Men", "Women", "Accessories"].map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => setCategoryFilter(cat)}
@@ -185,6 +194,11 @@ export default function Shop() {
                                             )}
                                         </div>
                                     )}
+                                    {product.section === "unisex" && (
+                                        <div style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 2 }}>
+                                            <span style={{ background: '#8b5cf6', color: 'white', padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '0.05em' }}>UNISEX</span>
+                                        </div>
+                                    )}
                                 </div>
                                 <div style={{ marginTop: '1.2rem', padding: '0 0.5rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.3rem' }}>
@@ -212,5 +226,17 @@ export default function Shop() {
                 .group:hover .quick-view { opacity: 1; transform: translate(-50%, 0); }
             `}} />
         </div>
+    );
+}
+
+export default function Shop() {
+    return (
+        <Suspense fallback={
+            <div className="page" style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                Loading The Archive...
+            </div>
+        }>
+            <ShopContent />
+        </Suspense>
     );
 }

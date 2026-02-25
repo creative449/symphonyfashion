@@ -30,21 +30,21 @@ export default function Hero() {
 
           <div className="hero-actions">
             <Link
-              href="/shop"
+              href="/shop?category=Men"
               className="btn-primary"
               style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
             >
-              Explore The Archive
+              Shop Men
               <span>↗</span>
             </Link>
-            <button
-              type="button"
+            <Link
+              href="/shop?category=Women"
               className="btn-ghost"
-              onClick={() => scrollToSection("women")}
+              style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
             >
               Shop Women
               <span>Curated looks</span>
-            </button>
+            </Link>
           </div>
 
           <div className="hero-metadata">

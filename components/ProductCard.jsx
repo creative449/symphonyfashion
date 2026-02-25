@@ -36,6 +36,9 @@ export default function ProductCard({ product, onAddToCart }) {
   return (
     <article className="product-card">
       {badgeLabel && <div className={badgeClass}>{badgeLabel}</div>}
+      {product.section === "unisex" && (
+        <div className="product-badge" style={{ background: "#8b5cf6", color: "white", left: "calc(100% - 4.5rem)" }}>UNISEX</div>
+      )}
 
       <Link href={`/product/${product._id || product.id}`} className="product-image-link">
         <div className="product-image">

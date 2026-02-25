@@ -19,9 +19,9 @@ export default function HomePage() {
         const response = await fetch('/api/products');
         const data = await response.json();
 
-        // Split data into categories using the section property
-        const men = data.filter(product => product.section === 'men');
-        const women = data.filter(product => product.section === 'women');
+        // Split data into categories using the section property (unisex goes to both)
+        const men = data.filter(product => product.section === 'men' || product.section === 'unisex');
+        const women = data.filter(product => product.section === 'women' || product.section === 'unisex');
 
         setMenProducts(men);
         setWomenProducts(women);
