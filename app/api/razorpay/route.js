@@ -20,9 +20,20 @@ export async function POST(req) {
 
         const order = await razorpay.orders.create(options);
 
+        // Check if there's a valid order
+        if (!order || !order.id) {
+            throw new Error("No Order ID created");
+        }
+
         return NextResponse.json(order, { status: 200 });
     } catch (error) {
         console.error("Razorpay order error", error);
-        return NextResponse.json({ error: "Could not create Razorpay order" }, { status: 500 });
+
+        // Check if it's an auth error (fake/missing keys)
+        if (error.statusCode === 401 || error.error?.description === 'Authentication failed') {
+            return NextResponse.json({ error: "Missing or Invalid Razorpay Keys. Please add your real RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to the .env.local file", code: "AUTH_FAILED" }, { status: 400 });
+        }
+
+        return NextResponse.json({ error: "Could not create Razorpay order", details: error.message }, { status: 500 });
     }
 }

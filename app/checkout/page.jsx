@@ -129,7 +129,7 @@ export default function CheckoutPage() {
 
                 rzp1.open();
             } else {
-                alert("Failed to initialize payment gateway.");
+                alert(order.error || "Failed to initialize payment gateway.");
                 setLoading(false);
             }
         } catch (error) {
