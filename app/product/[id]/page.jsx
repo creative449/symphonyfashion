@@ -1,11 +1,11 @@
 "use client";
 
-import { useCart } from "../../components/CartContext";
+import { useCart } from "../../../components/CartContext";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Navbar from "../../../components/Navbar";
+import Footer from "../../../components/Footer";
 import { useParams } from "next/navigation";
 
 export default function ProductDetailsPage() {
