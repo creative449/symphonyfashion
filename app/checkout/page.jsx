@@ -165,7 +165,7 @@ export default function CheckoutPage() {
             <Script src="https://checkout.razorpay.com/v1/checkout.js" />
             <Navbar cartCount={items.length} />
             <main className="container" style={{ padding: "1.5rem 0", flex: 1, maxWidth: "1200px", margin: "0 auto", width: "100%" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", padding: "0 1rem", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", padding: "0 1rem", marginBottom: "1rem", flexWrap: "wrap", gap: "1rem" }}>
                     <div>
                         <h1 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--text)", margin: 0 }}>Secure Checkout</h1>
                         <p style={{ color: "var(--muted)", fontSize: "0.85rem", margin: "0.2rem 0 0 0" }}>Please review your details and complete payment.</p>
@@ -175,63 +175,66 @@ export default function CheckoutPage() {
                     </Link>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'revert', gap: '2rem', padding: '0 1rem' }} className="checkout-grid">
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 350px', gap: '2rem', padding: '0 1rem', alignItems: 'start' }} className="checkout-grid">
 
                     {/* Left Column: Form */}
                     <div>
-                        <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                            <div style={{ padding: '1.5rem', background: 'var(--bg-elevated)', borderRadius: '18px', border: '1px solid var(--border-subtle)' }}>
-                                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--accent)', fontWeight: 700 }}>1. Shipping Information</h2>
+                        <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div style={{ padding: '1.2rem', background: 'var(--bg-elevated)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
+                                <h2 style={{ fontSize: '1.1rem', marginBottom: '0.8rem', color: 'var(--accent)', fontWeight: 700 }}>1. Shipping Information</h2>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '0.8rem' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Full Name</label>
-                                        <input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required type="text" style={{ padding: '0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)' }} placeholder="John Doe" />
+                                        <input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="John Doe" />
                                     </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Email Address</label>
-                                        <input value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required type="email" style={{ padding: '0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)' }} placeholder="john@example.com" />
+                                        <input value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required type="email" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="john@example.com" />
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1rem' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginBottom: '0.8rem' }}>
                                     <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Street Address</label>
-                                    <input value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required type="text" style={{ padding: '0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)' }} placeholder="123 Main St, Apt 4B" />
+                                    <input value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="123 Main St, Apt 4B" />
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.8rem' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>City</label>
-                                        <input value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} required type="text" style={{ padding: '0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)' }} placeholder="Mumbai" />
+                                        <input value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="Mumbai" />
                                     </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>State</label>
-                                        <input value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} required type="text" style={{ padding: '0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)' }} placeholder="MH" />
+                                        <input value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="MH" />
                                     </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Pin Code</label>
-                                        <input value={formData.pin} onChange={(e) => setFormData({ ...formData, pin: e.target.value })} required type="text" style={{ padding: '0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)' }} placeholder="400001" />
+                                        <input value={formData.pin} onChange={(e) => setFormData({ ...formData, pin: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="400001" />
                                     </div>
                                 </div>
                             </div>
 
-                            <div style={{ padding: '1.5rem', background: 'var(--bg-elevated)', borderRadius: '18px', border: '1px solid var(--border-subtle)' }}>
-                                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--accent)', fontWeight: 700 }}>2. Payment Processing</h2>
-                                <p style={{ fontSize: '0.85rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>This is a test checkout. Clicking the button will simulate a secure Razorpay redirect.</p>
-
-                                <button disabled={loading || items.length === 0} type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '1rem', fontSize: '1rem', fontWeight: 700 }}>
-                                    {loading ? "Processing..." : `Pay ₹${total.toLocaleString("en-IN")} securely`}
-                                </button>
+                            <div style={{ padding: '1.2rem', background: 'var(--bg-elevated)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div>
+                                        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.2rem', color: 'var(--accent)', fontWeight: 700 }}>2. Payment Processing</h2>
+                                        <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>Secure Razorpay redirect.</p>
+                                    </div>
+                                    <button disabled={loading || items.length === 0} type="submit" className="btn-primary" style={{ padding: '0.7rem 1.5rem', fontSize: '1rem', fontWeight: 700 }}>
+                                        {loading ? "Processing..." : `Pay ₹${total.toLocaleString("en-IN")}`}
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
 
                     {/* Right Column: Mini Cart Summary */}
                     <div>
-                        <div style={{ padding: '1.5rem', background: 'var(--accent-soft)', borderRadius: '18px', border: '1px solid rgba(255, 63, 108, 0.2)', position: 'sticky', top: '100px' }}>
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text)', fontWeight: 700 }}>Order Summary</h3>
+                        <div style={{ padding: '1.2rem', background: 'var(--accent-soft)', borderRadius: '16px', border: '1px solid rgba(255, 63, 108, 0.2)', position: 'sticky', top: '20px' }}>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.8rem', color: 'var(--text)', fontWeight: 700 }}>Order Summary</h3>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.8rem' }}>
                                 {items.map(item => (
                                     <div key={item.cartItemId || item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                                         <div>
