@@ -49,6 +49,7 @@ export default function CheckoutPage() {
         name: "",
         email: "",
         address: "",
+        addressType: "Home",
         city: "",
         state: "",
         pin: "",
@@ -118,6 +119,7 @@ export default function CheckoutPage() {
             shippingInfo: {
                 name: formData.name,
                 address: formData.address,
+                addressType: formData.addressType,
                 city: formData.city,
                 state: formData.state,
                 pin: formData.pin
@@ -188,6 +190,11 @@ export default function CheckoutPage() {
                     },
                     theme: {
                         color: "#f97316"
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            setLoading(false);
+                        }
                     }
                 };
 
@@ -266,7 +273,21 @@ export default function CheckoutPage() {
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginBottom: '0.8rem' }}>
-                                    <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Street Address</label>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Street Address</label>
+                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                            {['Home', 'Work', 'Other'].map(type => (
+                                                <button
+                                                    key={type}
+                                                    type="button"
+                                                    onClick={() => setFormData({ ...formData, addressType: type })}
+                                                    style={{ padding: '0.2rem 0.6rem', fontSize: '0.75rem', borderRadius: '12px', border: formData.addressType === type ? '1px solid var(--accent)' : '1px solid var(--border-subtle)', background: formData.addressType === type ? 'var(--accent-soft)' : 'transparent', color: formData.addressType === type ? 'var(--accent)' : 'var(--muted)', cursor: 'pointer', fontWeight: 600 }}
+                                                >
+                                                    {type}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
                                     <input value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="" />
                                 </div>
 
