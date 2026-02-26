@@ -43,11 +43,11 @@ export default function MenCollection() {
         <div className="page" style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
             <Navbar cartCount={itemCount} />
 
-            <div style={{ padding: "4rem 1rem 2rem 1rem", textAlign: "center", borderBottom: "1px solid var(--border-subtle)", background: "var(--bg-elevated)", marginBottom: "2rem" }}>
-                <h1 style={{ fontSize: "3rem", fontWeight: "800", marginBottom: "0.5rem" }}>
+            <div style={{ padding: "1.5rem 1rem 1rem 1rem", textAlign: "center", borderBottom: "1px solid var(--border-subtle)", background: "var(--bg-elevated)", marginBottom: "1rem" }}>
+                <h1 style={{ fontSize: "2rem", fontWeight: "800", marginBottom: "0.25rem", color: "var(--text)" }}>
                     Men's Collection
                 </h1>
-                <p style={{ color: "var(--muted)", fontSize: "1.1rem" }}>Curated essentials for him.</p>
+                <p style={{ color: "var(--muted)", fontSize: "0.95rem" }}>Curated essentials for him.</p>
             </div>
 
             <main className="container" style={{ padding: "3rem 0", flex: 1, maxWidth: "1400px", margin: "0 auto" }}>
