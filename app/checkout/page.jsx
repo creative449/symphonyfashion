@@ -8,38 +8,6 @@ import { useSession } from "next-auth/react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
-const indianStatesAndCities = {
-    "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool"],
-    "Arunachal Pradesh": ["Itanagar", "Tawang", "Naharlagun", "Pasighat"],
-    "Assam": ["Guwahati", "Dibrugarh", "Silchar", "Jorhat", "Nagaon"],
-    "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia"],
-    "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Durg"],
-    "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi"],
-    "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda"],
-    "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"],
-    "Haryana": ["Faridabad", "Gurugram", "Panipat", "Ambala", "Yamunanagar"],
-    "Himachal Pradesh": ["Shimla", "Mandi", "Dharamshala", "Solan", "Kullu"],
-    "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar"],
-    "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru", "Belagavi"],
-    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Kollam", "Thrissur"],
-    "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain"],
-    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik"],
-    "Manipur": ["Imphal", "Bishnupur", "Thoubal", "Churachandpur"],
-    "Meghalaya": ["Shillong", "Tura", "Nongstoin", "Jowai"],
-    "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Kolasib"],
-    "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Wokha"],
-    "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Brahmapur", "Sambalpur"],
-    "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda"],
-    "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Bikaner", "Ajmer"],
-    "Sikkim": ["Gangtok", "Namchi", "Pelling", "Mangan"],
-    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
-    "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Khammam"],
-    "Tripura": ["Agartala", "Dharmanagar", "Udaipur", "Belonia"],
-    "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi"],
-    "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur"],
-    "West Bengal": ["Kolkata", "Howrah", "Asansol", "Siliguri", "Durgapur"],
-};
-
 export default function CheckoutPage() {
     const { subtotal, items, clearCart } = useCart();
     const { data: session } = useSession();
@@ -55,6 +23,8 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [orderId, setOrderId] = useState("");
+    const [pinLoading, setPinLoading] = useState(false);
+    const [pinError, setPinError] = useState("");
 
     // Populate user details if logged in
     useEffect(() => {
@@ -70,8 +40,55 @@ export default function CheckoutPage() {
     const tax = subtotal * 0.18; // 18% GST Mock
     const total = subtotal + tax;
 
+    const handlePinChange = async (e) => {
+        const pin = e.target.value.replace(/[^0-9]/g, '');
+        if (pin.length > 6) return;
+
+        setFormData(prev => ({ ...prev, pin }));
+
+        if (pin.length === 6) {
+            setPinLoading(true);
+            try {
+                const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+                const data = await res.json();
+
+                if (data && data[0] && data[0].Status === "Success") {
+                    const postOffice = data[0].PostOffice[0];
+                    setFormData(prev => ({
+                        ...prev,
+                        pin: pin,
+                        state: postOffice.State,
+                        city: postOffice.District || postOffice.Name
+                    }));
+                    // Mock check for unserviceable pin codes (e.g. strict zone checks)
+                    const mockUnserviceable = ["999999", "000000"];
+                    if (mockUnserviceable.includes(pin)) {
+                        setPinError("Delivery cannot be met at this specific pin code yet.");
+                    } else {
+                        setPinError("");
+                    }
+                } else {
+                    setPinError("Invalid pin code mentioned. Warning: Wrong pin code for targeted city region.");
+                }
+            } catch (err) {
+                console.error("Pincode API failed", err);
+                setPinError("Error validating pin code at this moment.");
+            } finally {
+                setPinLoading(false);
+            }
+        } else {
+            setPinError("");
+        }
+    };
+
     const handleCheckout = async (e) => {
         e.preventDefault();
+
+        if (pinError || formData.pin.length !== 6) {
+            alert(pinError || "Please enter a completely valid 6-digit pin code and ensure delivery can be met before making payment.");
+            return;
+        }
+
         setLoading(true);
 
         const orderData = {
@@ -233,28 +250,22 @@ export default function CheckoutPage() {
 
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.8rem' }}>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                                        <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Pin Code</label>
+                                        <div style={{ position: 'relative' }}>
+                                            <input value={formData.pin} onChange={handlePinChange} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: pinError ? '1px solid #ef4444' : '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem', width: '100%' }} placeholder="Enter 6 digits" />
+                                            {pinLoading && <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.8rem', color: 'var(--accent)' }}>...</span>}
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>State</label>
-                                        <select value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value, city: "" })} required style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem', cursor: 'pointer' }}>
-                                            <option value="" disabled>Select State</option>
-                                            {Object.keys(indianStatesAndCities).map(state => (
-                                                <option key={state} value={state}>{state}</option>
-                                            ))}
-                                        </select>
+                                        <input value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="Auto-filled" />
                                     </div>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>City</label>
-                                        <select value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} required disabled={!formData.state} style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: formData.state ? 'var(--bg-elevated)' : 'var(--border-subtle)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem', cursor: formData.state ? 'pointer' : 'not-allowed' }}>
-                                            <option value="" disabled>Select City</option>
-                                            {formData.state && indianStatesAndCities[formData.state]?.map(city => (
-                                                <option key={city} value={city}>{city}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                                        <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Pin Code</label>
-                                        <input value={formData.pin} onChange={(e) => setFormData({ ...formData, pin: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="" />
+                                        <input value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="Auto-filled" />
                                     </div>
                                 </div>
+                                {pinError && <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.5rem', fontWeight: 600 }}>{pinError}</div>}
                             </div>
 
                             <div style={{ padding: '1.2rem', background: 'var(--bg-elevated)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
