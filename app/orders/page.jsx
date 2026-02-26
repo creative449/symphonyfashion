@@ -110,15 +110,16 @@ export default function MyOrders() {
     return (
         <div className="page">
             <Navbar cartCount={0} />
-            <main className="container" style={{ padding: "3rem 0", maxWidth: "1000px", margin: "0 auto", minHeight: "70vh" }}>
-                <div style={{ marginBottom: "2rem" }}>
+            <main className="container" style={{ padding: "1.5rem 0", maxWidth: "1000px", margin: "0 auto", minHeight: "70vh" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", padding: "0 1rem", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+                    <div>
+                        <h1 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--text)", margin: 0 }}>My Orders</h1>
+                        <p style={{ color: "var(--muted)", fontSize: "0.85rem", margin: "0.2rem 0 0 0" }}>Review and track your recent purchases.</p>
+                    </div>
                     <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, padding: 0 }}>
                         ← Go Back
                     </button>
                 </div>
-
-                <h1 style={{ fontSize: "2.5rem", fontWeight: "800", marginBottom: "0.5rem" }}>My Orders</h1>
-                <p style={{ color: "var(--muted)", marginBottom: "3rem" }}>Review and track your recent purchases.</p>
 
                 {error ? (
                     <div style={{ padding: "1rem", background: "#ef444420", color: "#ef4444", borderRadius: "8px" }}>
@@ -141,7 +142,7 @@ export default function MyOrders() {
                                         <p style={{ fontSize: "0.9rem", color: "var(--muted)", marginTop: "0.4rem" }}>Placed on {new Date(order.createdAt).toLocaleDateString()}</p>
                                     </div>
                                     <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.5rem" }}>
-                                        <span style={{ fontWeight: "700", fontSize: "1.3rem", color: "#f97316" }}>₹{order.totalAmount.toLocaleString("en-IN")}</span>
+                                        <span style={{ fontWeight: "700", fontSize: "1.3rem", color: "var(--text)" }}>₹{order.totalAmount.toLocaleString("en-IN")}</span>
                                         <button style={{ background: "transparent", border: "1px solid var(--border-subtle)", color: "var(--text)", padding: "0.4rem 0.8rem", borderRadius: "6px", fontSize: "0.8rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem" }}>
                                             <span>📄</span> Download Invoice
                                         </button>
@@ -151,11 +152,11 @@ export default function MyOrders() {
                                 {/* Tracking Timeline */}
                                 <div style={{ marginBottom: "2.5rem", padding: "0 1rem" }}>
                                     {["Return Requested", "Return Picked", "Return Received", "Refund Issued"].includes(order.status) ? (
-                                        <div style={{ padding: "1.5rem", background: "rgba(249,115,22,0.05)", borderRadius: "12px", border: "1px solid rgba(249,115,22,0.2)" }}>
-                                            <h4 style={{ color: "#f97316", marginBottom: "1.5rem", fontSize: "1rem" }}>Return Progress</h4>
+                                        <div style={{ padding: "1.5rem", background: "var(--accent-soft)", borderRadius: "12px", border: "1px solid rgba(255, 63, 108, 0.2)" }}>
+                                            <h4 style={{ color: "var(--accent)", marginBottom: "1.5rem", fontSize: "1rem" }}>Return Progress</h4>
                                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
                                                 <div style={{ position: "absolute", top: "50%", left: "5%", right: "5%", height: "3px", background: "var(--border-subtle)", zIndex: 0, transform: "translateY(-50%)" }}>
-                                                    <div style={{ height: "100%", background: "#f97316", transition: "width 0.5s ease", width: order.status === "Return Requested" ? "16%" : order.status === "Return Picked" ? "50%" : order.status === "Return Received" ? "83%" : "100%" }} />
+                                                    <div style={{ height: "100%", background: "var(--accent)", transition: "width 0.5s ease", width: order.status === "Return Requested" ? "16%" : order.status === "Return Picked" ? "50%" : order.status === "Return Received" ? "83%" : "100%" }} />
                                                 </div>
 
                                                 {["Return Requested", "Return Picked", "Return Received", "Refund Issued"].map((step, i) => {
@@ -164,31 +165,31 @@ export default function MyOrders() {
                                                     const isCompleted = i <= currentIndex;
                                                     return (
                                                         <div key={step} style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem", width: "80px" }}>
-                                                            <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: isCompleted ? "#f97316" : "var(--border-subtle)", border: "3px solid var(--bg-elevated)" }} />
+                                                            <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: isCompleted ? "var(--accent)" : "var(--border-subtle)", border: "3px solid var(--bg-elevated)" }} />
                                                             <span style={{ fontSize: "0.7rem", color: isCompleted ? "var(--text)" : "var(--muted)", fontWeight: 600, textAlign: "center", lineHeight: "1.2" }}>{step}</span>
                                                         </div>
                                                     );
                                                 })}
                                             </div>
-                                            {order.status === "Return Requested" && <p style={{ fontSize: "0.85rem", color: "#fbbf24", marginTop: "1.5rem", textAlign: "center", lineHeight: "1.4" }}>We've received your request! A delivery associate will be assigned to pick up your item shortly.</p>}
-                                            {order.status === "Refund Issued" && <p style={{ fontSize: "0.85rem", color: "#4ade80", marginTop: "1.5rem", textAlign: "center", lineHeight: "1.4" }}>Return Complete. Your refund has been successfully initiated! Please allow 5-7 business days for the amount to reflect in your original payment method.</p>}
+                                            {order.status === "Return Requested" && <p style={{ fontSize: "0.85rem", color: "var(--accent)", marginTop: "1.5rem", textAlign: "center", lineHeight: "1.4" }}>We've received your request! A delivery associate will be assigned to pick up your item shortly.</p>}
+                                            {order.status === "Refund Issued" && <p style={{ fontSize: "0.85rem", color: "#10b981", marginTop: "1.5rem", textAlign: "center", lineHeight: "1.4" }}>Return Complete. Your refund has been successfully initiated! Please allow 5-7 business days for the amount to reflect in your original payment method.</p>}
                                         </div>
                                     ) : (
                                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
                                             <div style={{ position: "absolute", top: "50%", left: "10%", right: "10%", height: "3px", background: "var(--border-subtle)", zIndex: 0, transform: "translateY(-50%)" }}>
-                                                <div style={{ height: "100%", background: "#22c55e", width: order.status === "Processing" ? "25%" : order.status === "Shipped" ? "75%" : "100%", transition: "width 0.5s ease" }} />
+                                                <div style={{ height: "100%", background: "#10b981", width: order.status === "Processing" ? "25%" : order.status === "Shipped" ? "75%" : "100%", transition: "width 0.5s ease" }} />
                                             </div>
 
                                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem" }}>
-                                                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#22c55e", border: "3px solid var(--bg-elevated)" }} />
+                                                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#10b981", border: "3px solid var(--bg-elevated)" }} />
                                                 <span style={{ fontSize: "0.8rem", color: "var(--text)", fontWeight: 600 }}>Processing</span>
                                             </div>
                                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem" }}>
-                                                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: order.status === "Shipped" || order.status === "Delivered" ? "#22c55e" : "var(--border-subtle)", border: "3px solid var(--bg-elevated)" }} />
+                                                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: order.status === "Shipped" || order.status === "Delivered" ? "#10b981" : "var(--border-subtle)", border: "3px solid var(--bg-elevated)" }} />
                                                 <span style={{ fontSize: "0.8rem", color: order.status === "Shipped" || order.status === "Delivered" ? "var(--text)" : "var(--muted)", fontWeight: 600 }}>Shipped</span>
                                             </div>
                                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, gap: "0.5rem" }}>
-                                                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: order.status === "Delivered" ? "#22c55e" : "var(--border-subtle)", border: "3px solid var(--bg-elevated)" }} />
+                                                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: order.status === "Delivered" ? "#10b981" : "var(--border-subtle)", border: "3px solid var(--bg-elevated)" }} />
                                                 <span style={{ fontSize: "0.8rem", color: order.status === "Delivered" ? "var(--text)" : "var(--muted)", fontWeight: 600 }}>Delivered</span>
                                             </div>
                                         </div>
@@ -205,7 +206,7 @@ export default function MyOrders() {
                                     {order.orderItems.map((item, idx) => (
                                         <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--accent-soft)", padding: "1rem", borderRadius: "12px", border: "1px solid var(--border-subtle)" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: "1.2rem" }}>
-                                                <div style={{ width: "70px", height: "70px", background: "radial-gradient(circle at top left, #3b82f6, #1e40af)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 700, fontSize: "1.2rem", boxShadow: "0 4px 10px rgba(0,0,0,0.3)" }}>
+                                                <div style={{ width: "70px", height: "70px", background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text)", fontWeight: 700, fontSize: "1.2rem" }}>
                                                     {item.quantity}x
                                                 </div>
                                                 <div>
@@ -215,7 +216,7 @@ export default function MyOrders() {
                                             </div>
                                             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.6rem" }}>
                                                 <div style={{ fontWeight: "600", fontSize: "1.1rem" }}>₹{item.price.toLocaleString("en-IN")}</div>
-                                                <button onClick={() => handleBuyAgain(item)} style={{ background: "rgba(249,115,22,0.1)", color: "#f97316", border: "none", padding: "0.4rem 0.8rem", borderRadius: "6px", fontSize: "0.8rem", cursor: "pointer", fontWeight: 600 }}>
+                                                <button onClick={() => handleBuyAgain(item)} style={{ background: "var(--accent)", color: "white", border: "none", padding: "0.4rem 0.8rem", borderRadius: "6px", fontSize: "0.8rem", cursor: "pointer", fontWeight: 600 }}>
                                                     Buy it again
                                                 </button>
                                             </div>
@@ -233,16 +234,16 @@ export default function MyOrders() {
                                     <div style={{ display: "flex", gap: "1rem", flexDirection: "column", alignItems: "flex-end" }}>
                                         <div style={{ display: "flex", gap: "1rem" }}>
                                             {order.status === "Processing" && (
-                                                <button onClick={() => handleCancelOrder(order._id)} style={{ background: "transparent", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
+                                                <button onClick={() => handleCancelOrder(order._id)} style={{ background: "transparent", color: "var(--text)", border: "1px solid var(--border-subtle)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
                                                     Cancel Order
                                                 </button>
                                             )}
                                             {order.status === "Delivered" && (
                                                 <div style={{ display: "flex", gap: "0.5rem" }}>
-                                                    <button onClick={() => handleReturnOrder(order._id)} style={{ background: "transparent", color: "#f97316", border: "1px solid rgba(249,115,22,0.5)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
+                                                    <button onClick={() => handleReturnOrder(order._id)} style={{ background: "transparent", color: "var(--accent)", border: "1px solid rgba(255, 63, 108, 0.4)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
                                                         Return Order
                                                     </button>
-                                                    <button onClick={() => alert("Mock: Open Review Modal")} style={{ background: "transparent", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.5)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
+                                                    <button onClick={() => alert("Mock: Open Review Modal")} style={{ background: "transparent", color: "var(--text)", border: "1px solid var(--border-subtle)", padding: "0.5rem 1rem", borderRadius: "6px", fontSize: "0.85rem", cursor: "pointer" }}>
                                                         Write a Review
                                                     </button>
                                                 </div>
