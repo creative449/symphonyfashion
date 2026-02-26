@@ -54,6 +54,9 @@ export default function CheckoutPage() {
         pin: "",
     });
 
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [orderId, setOrderId] = useState("");
     const [pinLoading, setPinLoading] = useState(false);
 
     // Populate user details if logged in
