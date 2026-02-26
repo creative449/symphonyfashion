@@ -12,10 +12,16 @@ export default function Navbar() {
     <header className="navbar">
       <div className="container navbar-inner">
         <Link href="/" className="brand">
-          <div className="brand-logo" />
+          <div className="brand-logo" style={{ background: "transparent", width: "40px", height: "40px" }}>
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="40" height="40" rx="8" fill="var(--accent)" />
+              <path d="M12 28L20 12L28 28H24L20 20L16 28H12Z" fill="white" />
+              <path d="M20 20L24 12H28L24 20H20Z" fill="rgba(255,255,255,0.7)" />
+            </svg>
+          </div>
           <div className="brand-text">
             <span className="brand-name">SYMPHONY FASHION</span>
-            <span className="brand-tagline">Future-forward streetwear</span>
+            <span className="brand-tagline">Elevated Premium Wear</span>
           </div>
         </Link>
 

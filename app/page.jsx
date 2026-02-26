@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
 import ProductSection from "../components/ProductSection";
 import Footer from "../components/Footer";
 import { useCart } from "../components/CartContext";
@@ -43,7 +42,16 @@ export default function HomePage() {
     <div className="page">
       <Navbar cartCount={itemCount} />
       <main>
-        <Hero />
+        <div style={{ background: "var(--accent-soft)", padding: "0.8rem 0", borderBottom: "1px solid var(--border-subtle)" }}>
+          <div className="container" style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap", fontSize: "0.85rem", fontWeight: 600, color: "var(--accent)" }}>
+            <span>✓ Free shipping over ₹1,499</span>
+            <span style={{ color: "var(--muted)" }}>•</span>
+            <span>✓ Easy 7-day returns</span>
+            <span style={{ color: "var(--muted)" }}>•</span>
+            <span>✓ COD available</span>
+          </div>
+        </div>
+        <div style={{ marginTop: "2rem" }} />
         <ProductSection
           id="men"
           title="Men&apos;s Collection"
