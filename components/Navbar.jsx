@@ -20,6 +20,9 @@ export default function Navbar() {
         </Link>
 
         <nav className="nav-links">
+          <Link href="/" className="nav-link">
+            Home
+          </Link>
           <Link href="/men" className="nav-link">
             Men
           </Link>
