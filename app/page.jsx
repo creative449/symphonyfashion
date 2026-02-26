@@ -36,7 +36,7 @@ export default function HomePage() {
   }, []);
 
   if (loading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#fff', fontSize: '1.2rem' }}>Loading Collections...</div>;
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text)', fontSize: '1.2rem', fontWeight: 500 }}>Loading Collections...</div>;
   }
 
   return (

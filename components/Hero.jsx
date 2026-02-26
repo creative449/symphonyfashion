@@ -30,7 +30,7 @@ export default function Hero() {
 
           <div className="hero-actions">
             <Link
-              href="/shop?category=Men"
+              href="/men"
               className="btn-primary"
               style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
             >
@@ -38,7 +38,7 @@ export default function Hero() {
               <span>↗</span>
             </Link>
             <Link
-              href="/shop?category=Women"
+              href="/women"
               className="btn-ghost"
               style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
             >

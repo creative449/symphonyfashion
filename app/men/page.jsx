@@ -43,23 +43,23 @@ export default function MenCollection() {
         <div className="page" style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
             <Navbar cartCount={itemCount} />
 
-            <div style={{ padding: "4rem 1rem 2rem 1rem", textAlign: "center", borderBottom: "1px solid rgba(148,163,184,0.1)" }}>
+            <div style={{ padding: "4rem 1rem 2rem 1rem", textAlign: "center", borderBottom: "1px solid var(--border-subtle)", background: "var(--bg-elevated)", marginBottom: "2rem" }}>
                 <h1 style={{ fontSize: "3rem", fontWeight: "800", marginBottom: "0.5rem" }}>
                     Men's Collection
                 </h1>
-                <p style={{ color: "#9ca3af" }}>Curated essentials for him.</p>
+                <p style={{ color: "var(--muted)", fontSize: "1.1rem" }}>Curated essentials for him.</p>
             </div>
 
             <main className="container" style={{ padding: "3rem 0", flex: 1, maxWidth: "1400px", margin: "0 auto" }}>
                 <div style={{ display: "flex", justifyContent: "flex-end", padding: "0 1rem", marginBottom: "2rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
-                        <span style={{ color: "#9ca3af", fontSize: "0.9rem" }}>Sort By:</span>
+                        <span style={{ color: "var(--muted)", fontSize: "0.9rem", fontWeight: 600 }}>Sort By:</span>
                         <select
                             value={sortOption}
                             onChange={(e) => setSortOption(e.target.value)}
                             style={{
-                                background: "rgba(15,23,42,0.8)", color: "white", border: "1px solid rgba(148,163,184,0.3)",
-                                padding: "0.6rem 1rem", borderRadius: "8px", fontSize: "0.9rem", cursor: "pointer", outline: "none"
+                                background: "#fff", color: "var(--text)", border: "1px solid var(--border-subtle)",
+                                padding: "0.6rem 1rem", borderRadius: "4px", fontSize: "0.9rem", cursor: "pointer", outline: "none", fontWeight: 500
                             }}
                         >
                             <option value="default">Featured</option>
@@ -71,11 +71,11 @@ export default function MenCollection() {
                 </div>
 
                 {loading ? (
-                    <div style={{ textAlign: "center", padding: "5rem 0", color: "#64748b" }}>Loading inventory...</div>
+                    <div style={{ textAlign: "center", padding: "5rem 0", color: "var(--muted)", fontSize: "1.1rem" }}>Loading inventory...</div>
                 ) : sortedProducts.length === 0 ? (
-                    <div style={{ textAlign: "center", padding: "8rem 0", background: "rgba(15,23,42,0.3)", borderRadius: "24px", border: "1px dashed rgba(148,163,184,0.2)", margin: "0 1rem" }}>
-                        <h3 style={{ fontSize: "1.5rem", color: "#e2e8f0", marginBottom: "0.5rem" }}>No items found</h3>
-                        <p style={{ color: "#9ca3af" }}>Check back soon for new arrivals.</p>
+                    <div style={{ textAlign: "center", padding: "8rem 0", background: "rgba(255, 63, 108, 0.03)", borderRadius: "8px", border: "1px dashed var(--border-subtle)", margin: "0 1rem" }}>
+                        <h3 style={{ fontSize: "1.5rem", color: "var(--text)", marginBottom: "0.5rem" }}>No items found</h3>
+                        <p style={{ color: "var(--muted)" }}>Check back soon for new arrivals.</p>
                     </div>
                 ) : (
                     <div className="product-grid">
