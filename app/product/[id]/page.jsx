@@ -6,10 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function ProductDetailsPage() {
     const params = useParams();
+    const router = useRouter();
     const { id } = params;
     const { addItem, itemCount } = useCart();
     const [product, setProduct] = useState(null);
@@ -54,9 +55,9 @@ export default function ProductDetailsPage() {
 
     if (error || !product) {
         return (
-            <div className="page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', color: '#fff' }}>
-                <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Product Not Found</h1>
-                <Link href="/" className="btn-primary">Back to Shop</Link>
+            <div className="page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--text)' }}>
+                <h1 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: 700 }}>Product Not Found</h1>
+                <Link href="/" className="btn-primary" style={{ textDecoration: "none" }}>Back to Shop</Link>
             </div>
         );
     }
@@ -67,14 +68,14 @@ export default function ProductDetailsPage() {
             <main className="container" style={{ padding: "4rem 0", maxWidth: "1200px", margin: "0 auto" }}>
 
                 <div style={{ padding: '0 1rem', marginBottom: '2rem' }}>
-                    <Link href="/" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, padding: 0 }}>
                         ← Back to products
-                    </Link>
+                    </button>
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "start", padding: '0 1rem' }}>
                     {/* Left: Image Gallery */}
-                    <div style={{ position: "relative", width: "100%", aspectRatio: "3/4", borderRadius: "24px", overflow: "hidden", background: "#0b1020", border: '1px solid rgba(51,65,85,0.6)' }}>
+                    <div style={{ position: "relative", width: "100%", aspectRatio: "3/4", borderRadius: "12px", overflow: "hidden", background: "#f1f2f4", border: '1px solid var(--border-subtle)' }}>
                         <Image
                             src={product.image}
                             alt={product.name}
@@ -85,10 +86,10 @@ export default function ProductDetailsPage() {
                         {(product.isNew || product.isOnSale) && (
                             <div style={{ position: "absolute", top: "1.5rem", left: "1.5rem", display: "flex", gap: "0.5rem" }}>
                                 {product.isNew && (
-                                    <span style={{ background: "#3b82f6", color: "white", padding: "0.4rem 0.8rem", borderRadius: "999px", fontSize: "0.75rem", fontWeight: "bold" }}>NEW</span>
+                                    <span style={{ background: "#10b981", color: "white", padding: "0.4rem 0.8rem", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold" }}>NEW</span>
                                 )}
                                 {product.isOnSale && (
-                                    <span style={{ background: "#ef4444", color: "white", padding: "0.4rem 0.8rem", borderRadius: "999px", fontSize: "0.75rem", fontWeight: "bold" }}>SALE</span>
+                                    <span style={{ background: "var(--accent)", color: "white", padding: "0.4rem 0.8rem", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold" }}>SALE</span>
                                 )}
                             </div>
                         )}
@@ -98,19 +99,19 @@ export default function ProductDetailsPage() {
                     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
 
                         <div>
-                            <div style={{ fontSize: "0.9rem", color: "#f97316", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: "600", marginBottom: "0.5rem" }}>
+                            <div style={{ fontSize: "0.9rem", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: "700", marginBottom: "0.5rem" }}>
                                 {product.category}
                             </div>
-                            <h1 style={{ fontSize: "3rem", lineHeight: 1.1, marginBottom: "1rem" }}>{product.name}</h1>
-                            <p style={{ fontSize: "1.2rem", color: "#9ca3af", lineHeight: 1.5 }}>
+                            <h1 style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--text)", lineHeight: 1.1, marginBottom: "1rem" }}>{product.name}</h1>
+                            <p style={{ fontSize: "1.2rem", color: "var(--muted)", lineHeight: 1.5 }}>
                                 {product.tagline}
                             </p>
                         </div>
 
-                        <div style={{ display: "flex", alignItems: "baseline", gap: "1rem", borderBottom: '1px solid rgba(148,163,184,0.2)', paddingBottom: '2rem' }}>
-                            <span style={{ fontSize: "2.5rem", fontWeight: "700", color: "#e5e7eb" }}>₹{product.price.toLocaleString("en-IN")}</span>
+                        <div style={{ display: "flex", alignItems: "baseline", gap: "1rem", borderBottom: '1px solid var(--border-subtle)', paddingBottom: '2rem' }}>
+                            <span style={{ fontSize: "2.2rem", fontWeight: "800", color: "var(--text)" }}>₹{product.price.toLocaleString("en-IN")}</span>
                             {product.originalPrice > product.price && (
-                                <span style={{ fontSize: "1.2rem", color: "#64748b", textDecoration: "line-through" }}>
+                                <span style={{ fontSize: "1.2rem", color: "var(--muted)", textDecoration: "line-through", fontWeight: 400 }}>
                                     ₹{product.originalPrice.toLocaleString("en-IN")}
                                 </span>
                             )}
@@ -118,21 +119,21 @@ export default function ProductDetailsPage() {
 
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: '1rem' }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                                <span style={{ fontWeight: "600", fontSize: "0.95rem" }}>Select Size</span>
-                                <button style={{ background: "none", border: "none", color: "#9ca3af", textDecoration: "underline", cursor: "pointer", fontSize: "0.85rem" }}>Size Guide</button>
+                                <span style={{ fontWeight: "700", fontSize: "1rem", color: "var(--text)" }}>Select Size</span>
+                                <button style={{ background: "none", border: "none", color: "var(--accent)", fontWeight: 600, textDecoration: "none", cursor: "pointer", fontSize: "0.85rem" }}>Size Guide</button>
                             </div>
 
-                            <div style={{ display: "flex", gap: "0.8rem", flexWrap: "wrap" }}>
+                            <div style={{ display: "flex", gap: "0.8rem", flexWrap: "wrap", marginBottom: "1rem" }}>
                                 {product.sizes?.map(size => (
                                     <button
                                         key={size}
                                         onClick={() => setSelectedSize(size)}
                                         style={{
-                                            width: "3.5rem", height: "3.5rem", borderRadius: "8px",
-                                            border: selectedSize === size ? "2px solid #f97316" : "1px solid rgba(148,163,184,0.3)",
-                                            background: selectedSize === size ? "rgba(249,115,22,0.1)" : "transparent",
-                                            color: selectedSize === size ? "white" : "#9ca3af",
-                                            fontSize: "1rem", fontWeight: "500", cursor: "pointer", transition: "all 0.2s"
+                                            width: "3.5rem", height: "3.5rem", borderRadius: "4px",
+                                            border: selectedSize === size ? "2px solid var(--accent)" : "1px solid var(--border-subtle)",
+                                            background: selectedSize === size ? "var(--accent-soft)" : "#fff",
+                                            color: selectedSize === size ? "var(--accent)" : "var(--text)",
+                                            fontSize: "1rem", fontWeight: "600", cursor: "pointer", transition: "all 0.2s"
                                         }}
                                     >
                                         {size}
