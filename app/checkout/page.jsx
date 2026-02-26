@@ -160,6 +160,32 @@ export default function CheckoutPage() {
             totalAmount: total
         };
 
+        // Auto-save new address to profile before even launching payment method
+        if (saveAddressForFuture && session && session.user) {
+            const newAddress = {
+                title: formData.addressType,
+                name: formData.name,
+                address: formData.address,
+                city: formData.city,
+                state: formData.state,
+                pin: formData.pin,
+                isDefault: savedAddresses.length === 0
+            };
+            const isDuplicate = savedAddresses.some(a => a.address.toLowerCase() === newAddress.address.toLowerCase() && a.pin === newAddress.pin);
+            if (!isDuplicate) {
+                try {
+                    await fetch("/api/user/profile", {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ addresses: [...savedAddresses, newAddress] })
+                    });
+                    setSavedAddresses(prev => [...prev, newAddress]); // update locally so it immediately shows up later without reload issue
+                } catch (e) {
+                    console.error('Failed to auto-save address', e);
+                }
+            }
+        }
+
         try {
             // 1. Create a Razorpay Order
             const razorpayRes = await fetch("/api/razorpay", {
@@ -198,29 +224,6 @@ export default function CheckoutPage() {
                             if (ourDbRes.ok) {
                                 const data = await ourDbRes.json();
                                 setOrderId(data.orderId || response.razorpay_order_id);
-
-                                // Auto-save new address to profile
-                                if (saveAddressForFuture && session && session.user) {
-                                    const newAddress = {
-                                        title: formData.addressType,
-                                        name: formData.name,
-                                        address: formData.address,
-                                        city: formData.city,
-                                        state: formData.state,
-                                        pin: formData.pin,
-                                        isDefault: savedAddresses.length === 0
-                                    };
-                                    const isDuplicate = savedAddresses.some(a => a.address.toLowerCase() === newAddress.address.toLowerCase() && a.pin === newAddress.pin);
-                                    if (!isDuplicate) {
-                                        try {
-                                            await fetch("/api/user/profile", {
-                                                method: "PUT",
-                                                headers: { "Content-Type": "application/json" },
-                                                body: JSON.stringify({ addresses: [...savedAddresses, newAddress] })
-                                            });
-                                        } catch (e) { console.error(e); }
-                                    }
-                                }
 
                                 setSuccess(true);
                                 clearCart();
