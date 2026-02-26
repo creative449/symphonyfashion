@@ -58,6 +58,7 @@ export default function CheckoutPage() {
     const [success, setSuccess] = useState(false);
     const [orderId, setOrderId] = useState("");
     const [pinLoading, setPinLoading] = useState(false);
+    const [pinError, setPinError] = useState("");
 
     // Populate user details if logged in
     useEffect(() => {
@@ -73,43 +74,44 @@ export default function CheckoutPage() {
     const tax = subtotal * 0.18; // 18% GST Mock
     const total = subtotal + tax;
 
-    const handlePinChange = (e) => {
+    const handlePinChange = async (e) => {
         const pin = e.target.value.replace(/[^0-9]/g, '');
         if (pin.length > 6) return;
         setFormData(prev => ({ ...prev, pin }));
+
+        if (pin.length === 6 && formData.state) {
+            setPinLoading(true);
+            try {
+                const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+                const data = await res.json();
+
+                if (data && data[0] && data[0].Status === "Success") {
+                    const postOffices = data[0].PostOffice;
+                    const isValidState = postOffices.some(po => po.State.toLowerCase() === formData.state.toLowerCase());
+
+                    if (!isValidState) {
+                        setPinError("Entered pin code not matching with state and cities.");
+                    } else {
+                        setPinError("");
+                    }
+                } else {
+                    setPinError("Invalid pin code mentioned.");
+                }
+            } catch (err) {
+                console.error("Pincode API failed", err);
+                setPinError(""); // Let it pass if API is down
+            } finally {
+                setPinLoading(false);
+            }
+        } else {
+            setPinError("");
+        }
     };
 
     const handleCheckout = async (e) => {
         e.preventDefault();
 
-        if (formData.pin.length !== 6) {
-            alert("Please enter a completely valid 6-digit pin code.");
-            return;
-        }
-
         setLoading(true);
-
-        try {
-            const pinRes = await fetch(`https://api.postalpincode.in/pincode/${formData.pin}`);
-            const pinData = await pinRes.json();
-
-            if (pinData && pinData[0] && pinData[0].Status === "Success") {
-                const postOffices = pinData[0].PostOffice;
-                const isValidState = postOffices.some(po => po.State.toLowerCase() === formData.state.toLowerCase());
-
-                if (!isValidState) {
-                    alert("Entered pin code not matching with state and cities. Please correct your pin code.");
-                    setLoading(false);
-                    return;
-                }
-            } else {
-                alert("Invalid pin code mentioned. Please correct your pin code.");
-                setLoading(false);
-                return;
-            }
-        } catch (err) {
-            console.error("API call failed, continuing with fallback validation", err);
-        }
 
         const orderData = {
             userEmail: formData.email,
@@ -289,7 +291,11 @@ export default function CheckoutPage() {
                                     </div>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Pin Code</label>
-                                        <input value={formData.pin} onChange={handlePinChange} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem', width: '100%' }} placeholder="Enter 6 digits" />
+                                        <div style={{ position: 'relative' }}>
+                                            <input value={formData.pin} onChange={handlePinChange} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: pinError ? '1px solid #ef4444' : '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem', width: '100%' }} placeholder="Enter 6 digits" />
+                                            {pinLoading && <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.8rem', color: 'var(--accent)' }}>...</span>}
+                                        </div>
+                                        {pinError && <div style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.2rem', fontWeight: 600 }}>{pinError}</div>}
                                     </div>
                                 </div>
                             </div>
