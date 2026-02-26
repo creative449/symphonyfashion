@@ -60,6 +60,8 @@ export default function CheckoutPage() {
     const [orderId, setOrderId] = useState("");
     const [pinLoading, setPinLoading] = useState(false);
     const [pinError, setPinError] = useState("");
+    const [savedAddresses, setSavedAddresses] = useState([]);
+    const [saveAddressForFuture, setSaveAddressForFuture] = useState(true);
 
     // Populate user details if logged in
     useEffect(() => {
@@ -69,6 +71,30 @@ export default function CheckoutPage() {
                 name: session.user.name || prev.name,
                 email: session.user.email || prev.email
             }));
+
+            const fetchProfile = async () => {
+                try {
+                    const res = await fetch("/api/user/profile");
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.user && data.user.addresses && data.user.addresses.length > 0) {
+                            setSavedAddresses(data.user.addresses);
+                            const defaultAddr = data.user.addresses.find(a => a.isDefault) || data.user.addresses[0];
+                            setFormData(prev => ({
+                                ...prev,
+                                address: defaultAddr.address || "",
+                                addressType: defaultAddr.title || "Home",
+                                city: defaultAddr.city || "",
+                                state: defaultAddr.state || "",
+                                pin: defaultAddr.pin || ""
+                            }));
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch profile", e);
+                }
+            };
+            fetchProfile();
         }
     }, [session]);
 
@@ -172,6 +198,30 @@ export default function CheckoutPage() {
                             if (ourDbRes.ok) {
                                 const data = await ourDbRes.json();
                                 setOrderId(data.orderId || response.razorpay_order_id);
+
+                                // Auto-save new address to profile
+                                if (saveAddressForFuture && session && session.user) {
+                                    const newAddress = {
+                                        title: formData.addressType,
+                                        name: formData.name,
+                                        address: formData.address,
+                                        city: formData.city,
+                                        state: formData.state,
+                                        pin: formData.pin,
+                                        isDefault: savedAddresses.length === 0
+                                    };
+                                    const isDuplicate = savedAddresses.some(a => a.address.toLowerCase() === newAddress.address.toLowerCase() && a.pin === newAddress.pin);
+                                    if (!isDuplicate) {
+                                        try {
+                                            await fetch("/api/user/profile", {
+                                                method: "PUT",
+                                                headers: { "Content-Type": "application/json" },
+                                                body: JSON.stringify({ addresses: [...savedAddresses, newAddress] })
+                                            });
+                                        } catch (e) { console.error(e); }
+                                    }
+                                }
+
                                 setSuccess(true);
                                 clearCart();
                             } else {
@@ -261,6 +311,36 @@ export default function CheckoutPage() {
                             <div style={{ padding: '1.2rem', background: 'var(--bg-elevated)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
                                 <h2 style={{ fontSize: '1.1rem', marginBottom: '0.8rem', color: 'var(--accent)', fontWeight: 700 }}>1. Shipping Information</h2>
 
+                                {session && savedAddresses.length > 0 && (
+                                    <div style={{ marginBottom: '1.8rem' }}>
+                                        <h3 style={{ fontSize: '0.9rem', color: 'var(--muted)', marginBottom: '0.8rem', fontWeight: 600 }}>Saved Addresses</h3>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                                            {savedAddresses.map((addr, idx) => (
+                                                <div key={idx} onClick={() => {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        name: addr.name || session.user.name,
+                                                        address: addr.address,
+                                                        addressType: addr.title || "Home",
+                                                        city: addr.city,
+                                                        state: addr.state,
+                                                        pin: addr.pin
+                                                    }));
+                                                }} style={{ border: formData.address === addr.address ? '2px solid var(--accent)' : '1px solid var(--border-subtle)', borderRadius: '12px', padding: '1.2rem', cursor: 'pointer', background: formData.address === addr.address ? 'var(--accent-soft)' : 'var(--bg-elevated)', position: 'relative', transition: 'all 0.2s ease' }}>
+                                                    <span style={{ position: 'absolute', top: '-10px', left: '15px', background: formData.address === addr.address ? 'var(--accent)' : 'var(--bg-elevated)', border: formData.address === addr.address ? 'none' : '1px solid var(--border-subtle)', color: formData.address === addr.address ? '#fff' : 'var(--text)', padding: '2px 10px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 700 }}>{addr.title || "Address"}</span>
+                                                    <p style={{ margin: 0, fontWeight: 700, fontSize: '0.95rem', color: 'var(--text)' }}>{addr.name || session.user.name}</p>
+                                                    <p style={{ margin: '0.4rem 0 0 0', fontSize: '0.85rem', color: 'var(--muted)', lineHeight: '1.5' }}>{addr.address},<br />{addr.city}, {addr.state} - {addr.pin}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '1.5rem 0 1rem 0' }}>
+                                            <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--muted)', fontWeight: 600, letterSpacing: '0.5px' }}>OR ENTER NEW ADDRESS</span>
+                                            <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '0.8rem' }}>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Full Name</label>
@@ -319,6 +399,13 @@ export default function CheckoutPage() {
                                         {pinError && <div style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.2rem', fontWeight: 600 }}>{pinError}</div>}
                                     </div>
                                 </div>
+
+                                {session && (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem', padding: '0.8rem', background: 'var(--bg-elevated)', borderRadius: '8px', border: '1px dashed var(--border-subtle)' }}>
+                                        <input type="checkbox" id="saveAddr" checked={saveAddressForFuture} onChange={(e) => setSaveAddressForFuture(e.target.checked)} style={{ width: '16px', height: '16px', accentColor: 'var(--accent)', cursor: 'pointer' }} />
+                                        <label htmlFor="saveAddr" style={{ fontSize: '0.85rem', color: 'var(--text)', fontWeight: 600, cursor: 'pointer' }}>Save this address securely for future orders</label>
+                                    </div>
+                                )}
                             </div>
 
                             <div style={{ padding: '1.2rem', background: 'var(--bg-elevated)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
