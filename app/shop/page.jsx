@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import ProductCard from "../../components/ProductCard";
 import { useCart } from "../../components/CartContext";
 
 function ShopContent() {
@@ -149,82 +150,14 @@ function ShopContent() {
                         <button onClick={() => { setSearchQuery(""); setCategoryFilter("All"); }} style={{ marginTop: "1.5rem", background: "none", border: "1px solid #3b82f6", color: "#3b82f6", padding: "0.6rem 1.5rem", borderRadius: "99px", cursor: "pointer" }}>Reset Filters</button>
                     </div>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2.5rem', padding: '0 1rem' }}>
+                    <div className="product-grid">
                         {filteredAndSortedProducts.map((product) => (
-                            <Link
-                                href={`/product/${product._id}`}
-                                key={product._id}
-                                style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column' }}
-                                className="group"
-                            >
-                                <div style={{
-                                    position: 'relative', width: '100%', aspectRatio: '3/4',
-                                    borderRadius: '16px', overflow: 'hidden', background: '#0b1020',
-                                    border: '1px solid rgba(51,65,85,0.4)', transition: 'all 0.4s ease',
-                                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
-                                }}>
-                                    <Image
-                                        src={product.image}
-                                        alt={product.name}
-                                        fill
-                                        style={{ objectFit: 'cover', transition: 'transform 0.6s ease' }}
-                                        className="hover-scale"
-                                    />
-
-                                    {/* Hover Overlay */}
-                                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', opacity: 0, transition: 'opacity 0.3s ease' }} className="hover-overlay" />
-
-                                    {/* Quick View Button simulated on hover */}
-                                    <div style={{
-                                        position: 'absolute', bottom: '1rem', left: '50%', transform: 'translate(-50%, 20px)',
-                                        background: 'rgba(255,255,255,0.95)', color: '#000', padding: '0.6rem 1.5rem',
-                                        borderRadius: '99px', fontSize: '0.85rem', fontWeight: 'bold', letterSpacing: '0.05em',
-                                        opacity: 0, transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', whiteSpace: 'nowrap'
-                                    }} className="quick-view">
-                                        VIEW DETAILS
-                                    </div>
-
-                                    {(product.isNew || product.isOnSale) && (
-                                        <div style={{ position: 'absolute', top: '1rem', left: '1rem', display: 'flex', gap: '0.5rem', zIndex: 2 }}>
-                                            {product.isNew && (
-                                                <span style={{ background: '#3b82f6', color: 'white', padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '0.05em' }}>NEW</span>
-                                            )}
-                                            {product.isOnSale && (
-                                                <span style={{ background: '#ef4444', color: 'white', padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '0.05em' }}>SALE</span>
-                                            )}
-                                        </div>
-                                    )}
-                                    {product.section === "unisex" && (
-                                        <div style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 2 }}>
-                                            <span style={{ background: '#8b5cf6', color: 'white', padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '0.05em' }}>UNISEX</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div style={{ marginTop: '1.2rem', padding: '0 0.5rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.3rem' }}>
-                                        <h3 style={{ fontSize: '1.05rem', color: '#f8fafc', fontWeight: '600', m: 0, lineHeight: 1.3 }}>{product.name}</h3>
-                                        <span style={{ fontSize: '1.05rem', fontWeight: '700', color: '#f97316', marginLeft: '1rem' }}>
-                                            ₹{product.price.toLocaleString("en-IN")}
-                                        </span>
-                                    </div>
-                                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: 0 }}>
-                                        {product.category || "Designer Series"}
-                                    </p>
-                                </div>
-                            </Link>
+                            <ProductCard key={product._id} product={product} onAddToCart={addItem} />
                         ))}
                     </div>
                 )}
             </main>
             <Footer />
-
-            {/* Inline CSS to handle hover states since standard React inline styles dont support pseudos well without emotion/styled-components */}
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                .group:hover .hover-scale { transform: scale(1.05); }
-                .group:hover .hover-overlay { opacity: 1; }
-                .group:hover .quick-view { opacity: 1; transform: translate(-50%, 0); }
-            `}} />
         </div>
     );
 }
