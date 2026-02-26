@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import ProductCard from "./ProductCard";
 
@@ -28,9 +28,10 @@ export default function ProductSection({ id, title, products, onAddToCart }) {
         <div className="product-grid">
           {products.map((product) => (
             <ProductCard
-              key={product.id}
+              key={product.id || product._id}
               product={product}
               onAddToCart={onAddToCart}
+              source={id}
             />
           ))}
         </div>

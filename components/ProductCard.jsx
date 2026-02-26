@@ -4,8 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function ProductCard({ product, onAddToCart }) {
+export default function ProductCard({ product, onAddToCart, source }) {
   const [selectedSize, setSelectedSize] = useState(null);
+
+  const productHref = source ? `/product/${product._id || product.id}?from=${source}` : `/product/${product._id || product.id}`;
 
   const {
     name,
@@ -40,7 +42,7 @@ export default function ProductCard({ product, onAddToCart }) {
         <div className="product-badge" style={{ background: "#8b5cf6", color: "white", left: "calc(100% - 4.5rem)" }}>UNISEX</div>
       )}
 
-      <Link href={`/product/${product._id || product.id}`} className="product-image-link">
+      <Link href={productHref} className="product-image-link">
         <div className="product-image">
           <div className="product-image-inner" />
           <div className="product-image-figure">
@@ -66,7 +68,7 @@ export default function ProductCard({ product, onAddToCart }) {
 
       <div className="product-info">
         <div className="product-category">{category}</div>
-        <Link href={`/product/${product._id || product.id}`} className="product-name-link">
+        <Link href={productHref} className="product-name-link">
           <h3 className="product-name">{name}</h3>
         </Link>
 

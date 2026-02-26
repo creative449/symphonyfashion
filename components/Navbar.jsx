@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useCart } from "./CartContext";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const { itemCount } = useCart();
+  const pathname = usePathname();
 
   return (
     <header className="navbar">
@@ -26,9 +28,11 @@ export default function Navbar() {
         </Link>
 
         <nav className="nav-links">
-          <Link href="/" className="nav-link">
-            Home
-          </Link>
+          {pathname !== "/" && (
+            <Link href="/" className="nav-link">
+              Home
+            </Link>
+          )}
           <Link href="/men" className="nav-link">
             Men
           </Link>

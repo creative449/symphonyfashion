@@ -80,7 +80,7 @@ export default function WomenCollection() {
                 ) : (
                     <div className="product-grid">
                         {sortedProducts.map((product) => (
-                            <ProductCard key={product._id} product={product} onAddToCart={addItem} />
+                            <ProductCard key={product._id} product={product} onAddToCart={addItem} source="women" />
                         ))}
                     </div>
                 )}

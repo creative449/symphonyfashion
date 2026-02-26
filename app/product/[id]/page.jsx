@@ -6,12 +6,18 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 export default function ProductDetailsPage() {
     const params = useParams();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { id } = params;
+
+    const fromSource = searchParams.get('from');
+    let backText = "← Back to products";
+    if (fromSource === 'men') backText = "← Back to Men's Collection";
+    else if (fromSource === 'women') backText = "← Back to Women's Collection";
     const { addItem, itemCount } = useCart();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -69,7 +75,7 @@ export default function ProductDetailsPage() {
 
                 <div style={{ padding: '0 1rem', marginBottom: '2rem' }}>
                     <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, padding: 0 }}>
-                        ← Back to products
+                        {backText}
                     </button>
                 </div>
 
