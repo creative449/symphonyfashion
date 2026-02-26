@@ -43,15 +43,12 @@ export default function MenCollection() {
         <div className="page" style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
             <Navbar cartCount={itemCount} />
 
-            <div style={{ padding: "1.5rem 1rem 1rem 1rem", textAlign: "center", borderBottom: "1px solid var(--border-subtle)", background: "var(--bg-elevated)", marginBottom: "1rem" }}>
-                <h1 style={{ fontSize: "2rem", fontWeight: "800", marginBottom: "0.25rem", color: "var(--text)" }}>
-                    Men's Collection
-                </h1>
-                <p style={{ color: "var(--muted)", fontSize: "0.95rem" }}>Curated essentials for him.</p>
-            </div>
-
-            <main className="container" style={{ padding: "3rem 0", flex: 1, maxWidth: "1400px", margin: "0 auto" }}>
-                <div style={{ display: "flex", justifyContent: "flex-end", padding: "0 1rem", marginBottom: "2rem" }}>
+            <main className="container" style={{ padding: "1.5rem 0", flex: 1, maxWidth: "1400px", margin: "0 auto" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", padding: "0 1rem", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+                    <div>
+                        <h1 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--text)", margin: 0 }}>Men's Collection</h1>
+                        <p style={{ color: "var(--muted)", fontSize: "0.85rem", margin: "0.2rem 0 0 0" }}>Curated essentials for him.</p>
+                    </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
                         <span style={{ color: "var(--muted)", fontSize: "0.9rem", fontWeight: 600 }}>Sort By:</span>
                         <select
