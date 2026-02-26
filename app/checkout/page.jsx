@@ -8,6 +8,40 @@ import { useSession } from "next-auth/react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
+const indianStatesAndCities = {
+    "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Rajahmundry", "Tirupati", "Kakinada", "Kadapa", "Anantapur"],
+    "Arunachal Pradesh": ["Itanagar", "Tawang", "Naharlagun", "Pasighat", "Ziro", "Roing"],
+    "Assam": ["Guwahati", "Dibrugarh", "Silchar", "Jorhat", "Nagaon", "Tinsukia", "Tezpur", "Bongaigaon"],
+    "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia", "Darbhanga", "Arrah", "Begusarai", "Katihar"],
+    "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Durg", "Rajnandgaon", "Raigarh", "Jagdalpur"],
+    "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi", "Central Delhi"],
+    "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda", "Bicholim"],
+    "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Gandhinagar", "Junagadh", "Anand", "Navsari"],
+    "Haryana": ["Faridabad", "Gurugram", "Panipat", "Ambala", "Yamunanagar", "Rohtak", "Hisar", "Karnal", "Sonipat", "Panchkula"],
+    "Himachal Pradesh": ["Shimla", "Mandi", "Dharamshala", "Solan", "Kullu", "Manali", "Palampur", "Baddi"],
+    "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar", "Hazaribagh", "Phusro", "Giridih"],
+    "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru", "Belagavi", "Davanagere", "Ballari", "Vijayapura", "Shivamogga", "Tumakuru"],
+    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Kollam", "Thrissur", "Alappuzha", "Palakkad", "Malappuram", "Kannur", "Kottayam"],
+    "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain", "Sagar", "Rewa", "Satna", "Ratlam", "Singrauli"],
+    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad", "Solapur", "Amravati", "Kolhapur", "Navi Mumbai", "Kalyan", "Vasai-Virar", "Jalgaon", "Akola", "Latur", "Dhule", "Ahmednagar", "Chandrapur", "Parbhani", "Jalna", "Panvel", "Bhiwandi", "Malegaon"],
+    "Manipur": ["Imphal", "Bishnupur", "Thoubal", "Churachandpur", "Kakching"],
+    "Meghalaya": ["Shillong", "Tura", "Nongstoin", "Jowai", "Baghmara"],
+    "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Kolasib", "Serchhip"],
+    "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Wokha", "Zunheboto"],
+    "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Brahmapur", "Sambalpur", "Puri", "Balasore", "Bhadrak", "Baripada"],
+    "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda", "Mohali", "Pathankot", "Hoshiarpur", "Batala", "Moga"],
+    "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Bikaner", "Ajmer", "Udaipur", "Bhilwara", "Alwar", "Bharatpur", "Sikar"],
+    "Sikkim": ["Gangtok", "Namchi", "Pelling", "Mangan", "Geyzing"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli", "Vellore", "Erode", "Thoothukudi", "Nagercoil"],
+    "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Khammam", "Ramagundam", "Mahbubnagar", "Nalgonda"],
+    "Tripura": ["Agartala", "Dharmanagar", "Udaipur", "Belonia", "Kailasahar"],
+    "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi", "Meerut", "Prayagraj", "Bareilly", "Aligarh", "Moradabad", "Saharanpur", "Gorakhpur", "Noida", "Firozabad", "Jhansi"],
+    "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur", "Rishikesh", "Kashipur"],
+    "West Bengal": ["Kolkata", "Howrah", "Asansol", "Siliguri", "Durgapur", "Bardhaman", "Malda", "Baharampur", "Habra", "Kharagpur"],
+};
+
+const allCities = Array.from(new Set(Object.values(indianStatesAndCities).flat())).sort();
+
 export default function CheckoutPage() {
     const { subtotal, items, clearCart } = useCart();
     const { data: session } = useSession();
@@ -20,11 +54,7 @@ export default function CheckoutPage() {
         pin: "",
     });
 
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [orderId, setOrderId] = useState("");
     const [pinLoading, setPinLoading] = useState(false);
-    const [pinError, setPinError] = useState("");
 
     // Populate user details if logged in
     useEffect(() => {
@@ -40,56 +70,43 @@ export default function CheckoutPage() {
     const tax = subtotal * 0.18; // 18% GST Mock
     const total = subtotal + tax;
 
-    const handlePinChange = async (e) => {
+    const handlePinChange = (e) => {
         const pin = e.target.value.replace(/[^0-9]/g, '');
         if (pin.length > 6) return;
-
         setFormData(prev => ({ ...prev, pin }));
-
-        if (pin.length === 6) {
-            setPinLoading(true);
-            try {
-                const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-                const data = await res.json();
-
-                if (data && data[0] && data[0].Status === "Success") {
-                    const postOffice = data[0].PostOffice[0];
-                    setFormData(prev => ({
-                        ...prev,
-                        pin: pin,
-                        state: postOffice.State,
-                        city: postOffice.District || postOffice.Name
-                    }));
-                    // Mock check for unserviceable pin codes (e.g. strict zone checks)
-                    const mockUnserviceable = ["999999", "000000"];
-                    if (mockUnserviceable.includes(pin)) {
-                        setPinError("Delivery cannot be met at this specific pin code yet.");
-                    } else {
-                        setPinError("");
-                    }
-                } else {
-                    setPinError("Invalid pin code mentioned. Warning: Wrong pin code for targeted city region.");
-                }
-            } catch (err) {
-                console.error("Pincode API failed", err);
-                setPinError("Error validating pin code at this moment.");
-            } finally {
-                setPinLoading(false);
-            }
-        } else {
-            setPinError("");
-        }
     };
 
     const handleCheckout = async (e) => {
         e.preventDefault();
 
-        if (pinError || formData.pin.length !== 6) {
-            alert(pinError || "Please enter a completely valid 6-digit pin code and ensure delivery can be met before making payment.");
+        if (formData.pin.length !== 6) {
+            alert("Please enter a completely valid 6-digit pin code.");
             return;
         }
 
         setLoading(true);
+
+        try {
+            const pinRes = await fetch(`https://api.postalpincode.in/pincode/${formData.pin}`);
+            const pinData = await pinRes.json();
+
+            if (pinData && pinData[0] && pinData[0].Status === "Success") {
+                const postOffices = pinData[0].PostOffice;
+                const isValidState = postOffices.some(po => po.State.toLowerCase() === formData.state.toLowerCase());
+
+                if (!isValidState) {
+                    alert("Entered pin code not matching with state and cities. Please correct your pin code.");
+                    setLoading(false);
+                    return;
+                }
+            } else {
+                alert("Invalid pin code mentioned. Please correct your pin code.");
+                setLoading(false);
+                return;
+            }
+        } catch (err) {
+            console.error("API call failed, continuing with fallback validation", err);
+        }
 
         const orderData = {
             userEmail: formData.email,
@@ -250,22 +267,28 @@ export default function CheckoutPage() {
 
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.8rem' }}>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                                        <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Pin Code</label>
-                                        <div style={{ position: 'relative' }}>
-                                            <input value={formData.pin} onChange={handlePinChange} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: pinError ? '1px solid #ef4444' : '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem', width: '100%' }} placeholder="Enter 6 digits" />
-                                            {pinLoading && <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.8rem', color: 'var(--accent)' }}>...</span>}
-                                        </div>
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>State</label>
-                                        <input value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="Auto-filled" />
+                                        <select value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value, city: "" })} required style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem', cursor: 'pointer' }}>
+                                            <option value="" disabled>Select State</option>
+                                            {Object.keys(indianStatesAndCities).map(state => (
+                                                <option key={state} value={state}>{state}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>City</label>
-                                        <input value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem' }} placeholder="Auto-filled" />
+                                        <select value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} required style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem', cursor: 'pointer' }}>
+                                            <option value="" disabled>Select City</option>
+                                            {(formData.state ? indianStatesAndCities[formData.state] : allCities).map(city => (
+                                                <option key={city} value={city}>{city}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                                        <label style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 600 }}>Pin Code</label>
+                                        <input value={formData.pin} onChange={handlePinChange} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} required type="text" style={{ padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text)', fontSize: '0.95rem', width: '100%' }} placeholder="Enter 6 digits" />
                                     </div>
                                 </div>
-                                {pinError && <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.5rem', fontWeight: 600 }}>{pinError}</div>}
                             </div>
 
                             <div style={{ padding: '1.2rem', background: 'var(--bg-elevated)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
